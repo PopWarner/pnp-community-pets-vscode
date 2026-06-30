@@ -1,0 +1,11 @@
+{
+  "$schema": "../../mascot.schema.json",
+  "name": "Parker",
+  "description": "Parker the Porcupine — the official PnP community mascot",
+  "type": "svg-frames",
+  "frameWidth": 64,
+  "frameHeight": 64,
+  "idle": "parker-ms.svg",
+  "walkRight": "parker-ms.svg",
+  "tags": ["pnp", "community", "featured"]
+}

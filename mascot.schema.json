@@ -1,0 +1,98 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PnP Community Pets — Mascot Manifest",
+  "description": "Drop this file in your mascot folder under media/pets/<your-mascot>/mascot.json",
+  "type": "object",
+  "required": ["name", "type"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "id": {
+      "type": "string",
+      "description": "Unique ID for this mascot. Defaults to the folder name if omitted.",
+      "pattern": "^[a-z0-9-]+$"
+    },
+    "name": {
+      "type": "string",
+      "description": "Display name shown in the mascot picker."
+    },
+    "description": {
+      "type": "string",
+      "description": "One-line description shown in the mascot picker."
+    },
+    "type": {
+      "type": "string",
+      "description": "Sprite format. Choose the one that matches your asset files.",
+      "enum": ["gif", "svg-frames", "png-sheet"]
+    },
+    "frameWidth": {
+      "type": "number",
+      "description": "Width the mascot is drawn at on the canvas, in pixels. Default: 128.",
+      "default": 64
+    },
+    "frameHeight": {
+      "type": "number",
+      "description": "Height the mascot is drawn at on the canvas, in pixels. Default: 128.",
+      "default": 64
+    },
+    "idle": {
+      "description": "GIF/PNG-sheet: filename of the idle asset. SVG-frames: filename or array of filenames.",
+      "oneOf": [
+        { "type": "string" },
+        { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+      ]
+    },
+    "walkRight": {
+      "description": "GIF/PNG-sheet: filename of the walk-right asset. SVG-frames: filename or array of filenames.",
+      "oneOf": [
+        { "type": "string" },
+        { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+      ]
+    },
+    "walkLeft": {
+      "description": "Optional. If omitted the renderer mirrors walkRight automatically.",
+      "oneOf": [
+        { "type": "string" },
+        { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+      ]
+    },
+    "src": {
+      "type": "string",
+      "description": "PNG-sheet only: filename of the sprite sheet PNG."
+    },
+    "framesPerRow": {
+      "type": "number",
+      "description": "PNG-sheet only: number of animation frames per row. Default: 4.",
+      "default": 4
+    },
+    "rows": {
+      "type": "object",
+      "description": "PNG-sheet only: row index for each animation state. Defaults to idle=0, walkRight=1, walkLeft=2.",
+      "properties": {
+        "idle":      { "type": "number" },
+        "walkRight": { "type": "number" },
+        "walkLeft":  { "type": "number" }
+      }
+    },
+    "tintable": {
+      "type": "boolean",
+      "description": "If true, pixels matching chromaColor are replaced with the user's chosen tint color at draw time."
+    },
+    "chromaColor": {
+      "type": "string",
+      "description": "The chroma-key color painted on tintable areas (default: #FF00FF). Use a color that never appears naturally in the art.",
+      "default": "#FF00FF",
+      "pattern": "^#[0-9A-Fa-f]{6}$"
+    },
+    "unlockedByBadgeId": {
+      "type": "string",
+      "description": "Optional Credly badge ID. When set, this mascot only appears in the picker after the user earns that badge."
+    },
+    "tags": {
+      "type": "array",
+      "description": "Tags used for filtering. Default: [\"community\"].",
+      "items": { "type": "string" },
+      "default": ["community"]
+    }
+  }
+}

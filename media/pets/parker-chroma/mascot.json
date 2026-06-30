@@ -1,0 +1,13 @@
+{
+  "$schema": "../../mascot.schema.json",
+  "name": "Parker (Tintable)",
+  "description": "Parker the Porcupine with a tintable shirt — pick your own color!",
+  "type": "png-sheet",
+  "src": "parker-wd-sprite-chroma.png",
+  "framesPerRow": 4,
+  "frameWidth": 64,
+  "frameHeight": 85,
+  "tintable": true,
+  "chromaColor": "#FF00FF",
+  "tags": ["pnp", "community", "tintable"]
+}

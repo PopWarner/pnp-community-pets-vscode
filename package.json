@@ -1,0 +1,134 @@
+{
+    "name": "pnp-community-pets",
+    "displayName": "PnP Community Pets",
+    "description": "Animated M365 and Power Platform mascots for your VS Code editor",
+    "version": "0.0.1",
+    "publisher": "pnp",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/pnp/pnp-community-pets-vscode"
+    },
+    "engines": {
+        "vscode": "^1.85.0"
+    },
+    "categories": ["Other"],
+    "keywords": ["pets", "mascots", "m365", "pnp", "power-platform", "community"],
+    "activationEvents": [],
+    "main": "./out/extension.js",
+    "contributes": {
+        "views": {
+            "explorer": [
+                {
+                    "type": "webview",
+                    "id": "pnpPets.petView",
+                    "name": "PnP Community Pets"
+                }
+            ]
+        },
+        "commands": [
+            {
+                "command": "pnpPets.spawnPet",
+                "title": "Spawn a Pet",
+                "category": "PnP Pets",
+                "icon": "$(add)"
+            },
+            {
+                "command": "pnpPets.removeAllPets",
+                "title": "Remove All Pets",
+                "category": "PnP Pets",
+                "icon": "$(trash)"
+            },
+            {
+                "command": "pnpPets.showBadges",
+                "title": "Show My Credly Badges",
+                "category": "PnP Pets",
+                "icon": "$(account)"
+            }
+        ],
+        "menus": {
+            "view/title": [
+                {
+                    "command": "pnpPets.spawnPet",
+                    "when": "view == pnpPets.petView",
+                    "group": "navigation"
+                },
+                {
+                    "command": "pnpPets.removeAllPets",
+                    "when": "view == pnpPets.petView",
+                    "group": "navigation"
+                },
+                {
+                    "command": "pnpPets.showBadges",
+                    "when": "view == pnpPets.petView",
+                    "group": "navigation"
+                }
+            ]
+        },
+        "configuration": {
+            "title": "PnP Community Pets",
+            "properties": {
+                "pnpPets.mascot": {
+                    "type": "string",
+                    "default": "parker",
+                    "description": "The mascot to display in the pet panel"
+                },
+                "pnpPets.theme": {
+                    "type": "string",
+                    "default": "auto",
+                    "enum": ["auto", "default", "winter", "spring", "halloween", "ignite", "build"],
+                    "enumDescriptions": [
+                        "Automatically picks a theme based on the current date",
+                        "Default VS Code background",
+                        "Winter holiday theme",
+                        "Spring theme",
+                        "Halloween theme",
+                        "Microsoft Ignite theme",
+                        "Microsoft Build theme"
+                    ],
+                    "description": "The background theme for the pet panel"
+                },
+                "pnpPets.speed": {
+                    "type": "number",
+                    "default": 2,
+                    "minimum": 1,
+                    "maximum": 10,
+                    "description": "Movement speed of pets (1 = slow, 10 = fast)"
+                },
+                "pnpPets.petCount": {
+                    "type": "number",
+                    "default": 1,
+                    "minimum": 1,
+                    "maximum": 10,
+                    "description": "Number of pets to spawn"
+                },
+                "pnpPets.credlyUsername": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Your Credly username to display your community badges in the pet panel"
+                },
+                "pnpPets.showBadgeStrip": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Show your Credly badges in a strip at the bottom of the pet panel"
+                }
+            }
+        }
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "lint": "eslint src --ext ts",
+        "package": "vsce package"
+    },
+    "devDependencies": {
+        "@types/vscode": "^1.85.0",
+        "@types/node": "18.x",
+        "@typescript-eslint/eslint-plugin": "^6.0.0",
+        "@typescript-eslint/parser": "^6.0.0",
+        "eslint": "^8.0.0",
+        "typescript": "^5.3.0",
+        "@vscode/vsce": "^2.22.0"
+    }
+}

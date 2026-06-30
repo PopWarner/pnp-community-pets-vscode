@@ -1,0 +1,11 @@
+{
+  "$schema": "../../mascot.schema.json",
+  "name": "Parker WD",
+  "description": "Parker the Porcupine in full PnP community gear",
+  "type": "png-sheet",
+  "src": "parker-wd-sprite.png",
+  "framesPerRow": 4,
+  "frameWidth": 64,
+  "frameHeight": 85,
+  "tags": ["pnp", "community"]
+}
