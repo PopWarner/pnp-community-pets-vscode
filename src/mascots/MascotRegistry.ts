@@ -24,10 +24,13 @@ export const MascotRegistry = {
 
     get: (id: string): MascotDefinition | undefined => _registry.get(id),
 
-    getAll: (): MascotDefinition[] => [..._registry.values()],
+    /** All mascots, including hidden ones. Use for lookups, not for pickers. */
+    getAllIncludingHidden: (): MascotDefinition[] => [..._registry.values()],
+
+    getAll: (): MascotDefinition[] => [..._registry.values()].filter(m => !m.hidden),
 
     getByTag: (tag: string): MascotDefinition[] =>
-        [..._registry.values()].filter(m => m.tags.includes(tag)),
+        [..._registry.values()].filter(m => !m.hidden && m.tags.includes(tag)),
 
     getUnlockedByBadge: (badgeId: string): MascotDefinition | undefined =>
         [..._registry.values()].find(m => m.unlockedByBadgeId === badgeId)
@@ -96,13 +99,15 @@ function _parse(json: Record<string, unknown>, folderName: string): MascotDefini
                 frameWidth,
                 frameHeight,
                 framesPerRow: _num(json.framesPerRow, 4),
+                ...(json.framePadding ? { framePadding: _num(json.framePadding, 0) } : {}),
                 rows: {
                     idle:      rows.idle      ?? 0,
                     walkRight: rows.walkRight ?? 1,
                     ...(rows.walkLeft !== undefined ? { walkLeft: rows.walkLeft } : {})
                 },
                 ...(json.tintable ? { tintable: true } : {}),
-                ...(json.chromaColor ? { chromaColor: String(json.chromaColor) } : {})
+                ...(json.chromaColor ? { chromaColor: String(json.chromaColor) } : {}),
+                ...(json.defaultTintColor ? { defaultTintColor: String(json.defaultTintColor) } : {})
             };
             break;
         }
@@ -136,7 +141,8 @@ function _parse(json: Record<string, unknown>, folderName: string): MascotDefini
         description,
         sprite,
         ...(json.unlockedByBadgeId ? { unlockedByBadgeId: String(json.unlockedByBadgeId) } : {}),
-        tags
+        tags,
+        ...(json.hidden ? { hidden: true } : {})
     };
 }
 

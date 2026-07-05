@@ -1,0 +1,7 @@
+{
+  "$schema": "../../badge.schema.json",
+  "name": "SharePoint Skills",
+  "description": "SharePoint Skills badge",
+  "imageFile": "sharepoint-skills-logo.png",
+  "linkUrl": "https://pnp.ms/rp"
+}

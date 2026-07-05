@@ -6,6 +6,9 @@ export interface PngSheetConfig {
     frameHeight: number;
     /** Number of animation frames per row */
     framesPerRow: number;
+    /** Pixels to inset from each cell's edge before cropping, so contributors
+     *  can leave grid-guide lines baked into the sheet without them rendering. */
+    framePadding?: number;
     /** Row index in the sheet for each animation state.
      *  Omit walkLeft to auto-mirror walkRight. */
     rows: {
@@ -19,6 +22,9 @@ export interface PngSheetConfig {
     chromaColor?: string;
     /** User-chosen tint color, set at spawn time. Only present when tintable is true. */
     tintColor?: string;
+    /** Fallback tint applied on non-interactive spawns (e.g. auto-spawn on startup)
+     *  so a tintable mascot never appears with its raw chroma color unintentionally. */
+    defaultTintColor?: string;
 }
 
 export interface SvgFramesConfig {
@@ -52,6 +58,29 @@ export interface GifConfig {
 
 export type SpriteConfig = PngSheetConfig | SvgFramesConfig | GifConfig;
 
+export interface SavedPet {
+    /** Stable per-pet ID, assigned at spawn time. Lets a single pet be targeted
+     *  later (removed, or have its speed adjusted) without respawning it. */
+    id: string;
+    mascotId: string;
+    name: string;
+    tintColor?: string;
+    /** ID of a badge from the badge library, shown on a sign held by this pet. */
+    signBadgeId?: string;
+    /** Multiplier applied on top of the global pnpPets.speed setting. Default 1. */
+    speedMultiplier?: number;
+}
+
+export interface BadgeDefinition {
+    id: string;
+    name: string;
+    description: string;
+    /** Logo/badge image filename, relative to media/badges/<id>/ */
+    imageFile: string;
+    /** Optional URL opened when the sign is clicked (e.g. a Credly badge page or event site) */
+    linkUrl?: string;
+}
+
 export interface MascotDefinition {
     id: string;
     name: string;
@@ -60,4 +89,7 @@ export interface MascotDefinition {
     /** Credly badge ID that unlocks this mascot */
     unlockedByBadgeId?: string;
     tags: string[];
+    /** If true, this mascot is excluded from the spawn picker but can still be
+     *  selected directly via the pnpPets.mascot setting or a badge unlock. */
+    hidden?: boolean;
 }

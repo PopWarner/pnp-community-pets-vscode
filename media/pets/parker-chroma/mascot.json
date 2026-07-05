@@ -1,7 +1,8 @@
 {
   "$schema": "../../mascot.schema.json",
-  "name": "Parker (Tintable)",
-  "description": "Parker the Porcupine with a tintable shirt — pick your own color!",
+  "id": "parker",
+  "name": "Parker",
+  "description": "Parker the Porcupine — the official PnP community mascot. Pick your own shirt color!",
   "type": "png-sheet",
   "src": "parker-wd-sprite-chroma.png",
   "framesPerRow": 4,
@@ -9,5 +10,6 @@
   "frameHeight": 85,
   "tintable": true,
   "chromaColor": "#FF00FF",
-  "tags": ["pnp", "community", "tintable"]
+  "defaultTintColor": "#7B48CC",
+  "tags": ["pnp", "community", "featured", "tintable"]
 }

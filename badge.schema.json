@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PnP Community Pets: Badge/Logo Library Manifest",
+  "description": "Drop this file in your badge folder under media/badges/<your-badge>/badge.json",
+  "type": "object",
+  "required": ["name", "imageFile"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "id": {
+      "type": "string",
+      "description": "Unique ID for this badge. Defaults to the folder name if omitted.",
+      "pattern": "^[a-z0-9-]+$"
+    },
+    "name": {
+      "type": "string",
+      "description": "Display name shown in the badge/sign picker."
+    },
+    "description": {
+      "type": "string",
+      "description": "One-line description shown in the badge/sign picker."
+    },
+    "imageFile": {
+      "type": "string",
+      "description": "Filename of the badge/logo image (transparent PNG recommended), relative to this folder."
+    },
+    "linkUrl": {
+      "type": "string",
+      "description": "Optional URL opened when the sign is clicked, e.g. a Credly badge page or event site."
+    }
+  }
+}

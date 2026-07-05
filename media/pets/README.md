@@ -1,6 +1,6 @@
 # media/pets/
 
-Each mascot lives in its own subfolder. Contributors can use PNG sprite sheets, SVG frames, or animated GIFs — the format is configured per-mascot in the registry, not enforced by folder structure.
+Each mascot lives in its own subfolder. Contributors can use PNG sprite sheets, SVG frames, or animated GIFs; the format is configured per-mascot in the registry, not enforced by folder structure.
 
 ```text
 media/pets/
@@ -62,8 +62,8 @@ Flat colors, clean outlines, no background fill.
 One static SVG file per animation frame. The canvas cycles through them like a flipbook.
 
 - No background fill
-- Any viewBox — the canvas scales to `frameWidth × frameHeight` automatically
-- `walkLeft` frames are optional — set `walkLeft: []` in the registry and the renderer auto-mirrors `walkRight`
+- Any viewBox: the canvas scales to `frameWidth × frameHeight` automatically
+- `walkLeft` frames are optional; set `walkLeft: []` in the registry and the renderer auto-mirrors `walkRight`
 
 **Minimum setup (one SVG, all states share it):**
 
@@ -86,7 +86,7 @@ your-mascot/
 
 ## GIF format
 
-One animated GIF per animation state. The browser handles frame timing internally — no frame math required.
+One animated GIF per animation state. The browser handles frame timing internally, so no frame math is required.
 
 ```text
 your-mascot/
@@ -96,7 +96,7 @@ your-mascot/
 ```
 
 - Recommended: 8 fps, transparent background, 128×128 px
-- Keep file size small — GIFs loop continuously inside the webview
+- Keep file size small; GIFs loop continuously inside the webview
 - `walkLeft` is optional. Set `frames.walkLeft` in the registry to omit it; the renderer flips `walkRight` automatically
 
 **Registry entry:**

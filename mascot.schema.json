@@ -65,6 +65,11 @@
       "description": "PNG-sheet only: number of animation frames per row. Default: 4.",
       "default": 4
     },
+    "framePadding": {
+      "type": "number",
+      "description": "PNG-sheet only: pixels to inset from each cell's edge before cropping. Lets you leave grid-guide lines baked into the sheet without them rendering. Use 3 if you built your sheet from templates/sprite-sheet-guide-4x2.png. Default: 0.",
+      "default": 0
+    },
     "rows": {
       "type": "object",
       "description": "PNG-sheet only: row index for each animation state. Defaults to idle=0, walkRight=1, walkLeft=2.",
@@ -83,6 +88,16 @@
       "description": "The chroma-key color painted on tintable areas (default: #FF00FF). Use a color that never appears naturally in the art.",
       "default": "#FF00FF",
       "pattern": "^#[0-9A-Fa-f]{6}$"
+    },
+    "defaultTintColor": {
+      "type": "string",
+      "description": "Fallback tint applied when a tintable mascot is spawned without the user picking a color (e.g. auto-spawn on startup). Only used when tintable is true.",
+      "pattern": "^#[0-9A-Fa-f]{6}$"
+    },
+    "hidden": {
+      "type": "boolean",
+      "description": "If true, this mascot is excluded from the spawn picker but can still be used directly via the pnpPets.mascot setting or a badge unlock.",
+      "default": false
     },
     "unlockedByBadgeId": {
       "type": "string",

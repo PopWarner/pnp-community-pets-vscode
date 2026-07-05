@@ -14,6 +14,10 @@
     // How many pixels from each edge counts as "at the wall/floor/ceiling"
     const SURFACE_MARGIN = 4;
 
+    // Click-reaction bounce
+    const REACT_DURATION = 350;
+    const REACT_BOUNCE_HEIGHT = 8;
+
     const mascots = [];
     let lastTick = 0;
 
@@ -111,12 +115,14 @@
 
             const row = rows[sourceState] ?? 0;
             const col = frame % framesPerRow;
+            const pad = this.config.framePadding ?? 0;
 
             _drawRotated(x, y, frameWidth, frameHeight, rotation, () => {
                 if (mirror) { ctx.scale(-1, 1); }
                 ctx.drawImage(
                     this._drawSource,
-                    col * this._srcFrameW, row * this._srcFrameH, this._srcFrameW, this._srcFrameH,
+                    col * this._srcFrameW + pad, row * this._srcFrameH + pad,
+                    this._srcFrameW - pad * 2, this._srcFrameH - pad * 2,
                     -frameWidth / 2, -frameHeight / 2, frameWidth, frameHeight
                 );
             });
@@ -268,12 +274,74 @@
     }
 
     // -------------------------------------------------------------------------
+    // Sign — a badge/logo held above the mascot. Drawn in the mascot's local
+    // (pre-rotation) coordinate space, so it rotates along with the mascot on
+    // walls and ceiling, same as a physically held object would.
+    // -------------------------------------------------------------------------
+
+    const SIGN_WIDTH  = 48;
+    const SIGN_HEIGHT = 55;
+    const SIGN_GAP    = 12;
+
+    class SignRenderer {
+        constructor(sign) {
+            this.ready = false;
+            this.linkUrl = sign.linkUrl || null;
+            this._loaded = 0;
+
+            const onLoad = () => {
+                this._loaded++;
+                if (this._loaded === 2) { this.ready = true; }
+            };
+
+            this._template = new Image();
+            this._template.onload = onLoad;
+            this._template.src = sign.templateUri;
+
+            this._badge = new Image();
+            this._badge.onload = onLoad;
+            this._badge.src = sign.badgeImageUri;
+        }
+
+        // Called from inside the mascot's rotated transform — (0, 0) is the
+        // mascot's own center, so this positions the sign relative to that.
+        draw(frameHeight) {
+            if (!this.ready) { return; }
+
+            const x = -SIGN_WIDTH / 2;
+            const y = -frameHeight / 2 - SIGN_HEIGHT - SIGN_GAP;
+
+            ctx.drawImage(this._template, x, y, SIGN_WIDTH, SIGN_HEIGHT);
+
+            // Centered inside the square body, with real padding on every side
+            const badgeSize = SIGN_WIDTH * 0.7;
+            const badgeX = x + SIGN_WIDTH / 2 - badgeSize / 2;
+            const badgeY = y + SIGN_HEIGHT * 0.4375 - badgeSize / 2;
+            ctx.drawImage(this._badge, badgeX, badgeY, badgeSize, badgeSize);
+        }
+
+        // (localX, localY) are already in the mascot's local, pre-rotation
+        // coordinate space (same space draw() renders into).
+        hitTest(localX, localY, frameHeight) {
+            if (!this.ready) { return false; }
+            const left   = -SIGN_WIDTH / 2;
+            const right  = SIGN_WIDTH / 2;
+            const bottom = -frameHeight / 2 - SIGN_GAP;
+            const top    = bottom - SIGN_HEIGHT;
+            return localX >= left && localX <= right && localY >= top && localY <= bottom;
+        }
+    }
+
+    // -------------------------------------------------------------------------
     // Mascot
     // -------------------------------------------------------------------------
 
     class Mascot {
-        constructor(definition, name) {
+        constructor(definition, name, sign, id, speedMultiplier) {
+            this.id       = id || null;
             this.name     = name || '';
+            this.speedMultiplier = speedMultiplier || 1;
+            this.signRenderer = sign ? new SignRenderer(sign) : null;
             const sprite = definition.sprite;
             if (sprite.type === 'png-sheet') {
                 this.renderer = new PngSheetRenderer(sprite);
@@ -299,6 +367,44 @@
             this.lastFrameAt = 0;
             this.idleElapsed = 0;
             this.idleDuration = _randomIdleDuration();
+            this.reactUntil = 0;
+        }
+
+        /** Triggers a brief "noticed" bounce, e.g. in response to a click. */
+        react(now) {
+            this.reactUntil = now + REACT_DURATION;
+        }
+
+        // Converts a canvas point into this mascot's local, pre-rotation
+        // coordinate space — the same space its sprite and sign are drawn in.
+        _toLocalPoint(px, py) {
+            const fw = this.renderer.frameWidth;
+            const fh = this.renderer.frameHeight;
+            const cx = this.x + fw / 2;
+            const cy = this.y + fh / 2;
+            const rotation = this._rotation();
+            const dx = px - cx;
+            const dy = py - cy;
+            const cos = Math.cos(-rotation);
+            const sin = Math.sin(-rotation);
+            return { x: dx * cos - dy * sin, y: dx * sin + dy * cos };
+        }
+
+        // Returns 'sign', 'body', or null
+        hitTest(px, py) {
+            const local = this._toLocalPoint(px, py);
+            const fw = this.renderer.frameWidth;
+            const fh = this.renderer.frameHeight;
+
+            if (this.signRenderer && this.signRenderer.hitTest(local.x, local.y, fh)) {
+                return 'sign';
+            }
+
+            if (local.x >= -fw / 2 && local.x <= fw / 2 && local.y >= -fh / 2 && local.y <= fh / 2) {
+                return 'body';
+            }
+
+            return null;
         }
 
         update(now, deltaMs) {
@@ -327,10 +433,11 @@
             const fw = this.renderer.frameWidth;
             const fh = this.renderer.frameHeight;
             const dir = this.moveDir;
+            const speed = SPEED * this.speedMultiplier;
 
             switch (this.surface) {
                 case Surface.FLOOR:
-                    this.x += SPEED * dir;
+                    this.x += speed * dir;
                     if (this.x <= SURFACE_MARGIN) {
                         this.x = SURFACE_MARGIN;
                         this._transitionToSurface(Surface.LEFT_WALL, MoveDir.POSITIVE);
@@ -341,7 +448,7 @@
                     break;
 
                 case Surface.LEFT_WALL:
-                    this.y -= SPEED * dir;
+                    this.y -= speed * dir;
                     if (this.y <= SURFACE_MARGIN) {
                         this.y = SURFACE_MARGIN;
                         this._transitionToSurface(Surface.CEILING, MoveDir.POSITIVE);
@@ -352,7 +459,7 @@
                     break;
 
                 case Surface.CEILING:
-                    this.x += SPEED * dir;
+                    this.x += speed * dir;
                     if (this.x + fw >= canvas.width - SURFACE_MARGIN) {
                         this.x = canvas.width - fw - SURFACE_MARGIN;
                         this._transitionToSurface(Surface.RIGHT_WALL, MoveDir.POSITIVE);
@@ -363,7 +470,7 @@
                     break;
 
                 case Surface.RIGHT_WALL:
-                    this.y += SPEED * dir;
+                    this.y += speed * dir;
                     if (this.y + fh >= canvas.height - SURFACE_MARGIN) {
                         this.y = canvas.height - fh - SURFACE_MARGIN;
                         this._transitionToSurface(Surface.FLOOR, MoveDir.NEGATIVE);
@@ -428,14 +535,32 @@
             }
         }
 
-        draw() {
-            const x = Math.round(this.x);
-            const y = Math.round(this.y);
+        draw(now) {
+            let x = Math.round(this.x);
+            let y = Math.round(this.y);
 
-            this.renderer.draw(x, y, this._spriteState(), this.frame, this._rotation());
+            const rotation = this._rotation();
+
+            if (this.reactUntil && now < this.reactUntil) {
+                const progress = 1 - (this.reactUntil - now) / REACT_DURATION;
+                const bounce = Math.sin(progress * Math.PI) * REACT_BOUNCE_HEIGHT;
+                // Bounce in the mascot's own "away from the surface" direction,
+                // rotated into whatever world-space direction that is right now.
+                x += Math.round(bounce * Math.sin(rotation));
+                y -= Math.round(bounce * Math.cos(rotation));
+            }
+            this.renderer.draw(x, y, this._spriteState(), this.frame, rotation);
 
             if (this.name && this.surface === Surface.FLOOR) {
                 _drawName(this.name, x + this.renderer.frameWidth / 2, y - 6);
+            }
+
+            if (this.signRenderer) {
+                const fw = this.renderer.frameWidth;
+                const fh = this.renderer.frameHeight;
+                _drawRotated(x, y, fw, fh, rotation, () => {
+                    this.signRenderer.draw(fh);
+                });
             }
         }
     }
@@ -466,13 +591,37 @@
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         for (const m of mascots) {
             m.update(now, delta);
-            m.draw();
+            m.draw(now);
         }
 
         requestAnimationFrame(tick);
     }
 
     requestAnimationFrame(tick);
+
+    // -------------------------------------------------------------------------
+    // Click handling — hit-test topmost-first, react to a body click, open the
+    // badge's link (if any) on a sign click.
+    // -------------------------------------------------------------------------
+
+    canvas.addEventListener('click', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const clickX = e.clientX - rect.left;
+        const clickY = e.clientY - rect.top;
+
+        for (let i = mascots.length - 1; i >= 0; i--) {
+            const m = mascots[i];
+            const hit = m.hitTest(clickX, clickY);
+            if (!hit) { continue; }
+
+            if (hit === 'sign' && m.signRenderer.linkUrl) {
+                vscode.postMessage({ command: 'openLink', url: m.signRenderer.linkUrl });
+            }
+
+            m.react(performance.now());
+            break;
+        }
+    });
 
     // -------------------------------------------------------------------------
     // Badge strip
@@ -508,15 +657,27 @@
         const { command } = event.data;
         switch (command) {
             case 'spawnPets': {
-                const { mascot, count, name } = event.data;
+                const { mascot, count, name, sign, ids, speedMultiplier } = event.data;
                 for (let i = 0; i < (count ?? 1); i++) {
-                    mascots.push(new Mascot(mascot, name));
+                    mascots.push(new Mascot(mascot, name, sign, ids ? ids[i] : undefined, speedMultiplier));
                 }
                 break;
             }
             case 'removeAllPets':
                 mascots.length = 0;
                 break;
+            case 'removePet': {
+                const index = mascots.findIndex(m => m.id === event.data.id);
+                if (index !== -1) { mascots.splice(index, 1); }
+                break;
+            }
+            case 'updatePet': {
+                const target = mascots.find(m => m.id === event.data.id);
+                if (target && typeof event.data.speedMultiplier === 'number') {
+                    target.speedMultiplier = event.data.speedMultiplier;
+                }
+                break;
+            }
             case 'updateBadges':
                 renderBadges(event.data.badges ?? [], event.data.profileUrl ?? '');
                 break;

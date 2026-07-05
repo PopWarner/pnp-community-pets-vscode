@@ -1,13 +1,23 @@
 import * as vscode from 'vscode';
-import { MascotDefinition, SpriteConfig } from './mascots/types';
+import * as crypto from 'crypto';
+import { MascotDefinition, SavedPet, SpriteConfig } from './mascots/types';
 import { MascotRegistry } from './mascots/MascotRegistry';
+import { BadgeRegistry } from './mascots/BadgeRegistry';
 import { ThemeManager } from './themes/ThemeManager';
 import { CredlyService } from './credly/CredlyService';
+
+interface ResolvedSign {
+    templateUri: string;
+    badgeImageUri: string;
+    linkUrl?: string;
+}
 
 export class PetViewProvider implements vscode.WebviewViewProvider {
     public static readonly viewType = 'pnpPets.petView';
 
     private _view?: vscode.WebviewView;
+    private _activePets: SavedPet[] = [];
+    private readonly _savedPetsKey = 'pnpPets.savedPets';
 
     constructor(private readonly _context: vscode.ExtensionContext) {}
 
@@ -30,12 +40,6 @@ export class PetViewProvider implements vscode.WebviewViewProvider {
         webviewView.webview.onDidReceiveMessage(
             async (msg: { command: string }) => this._handleMessage(msg)
         );
-
-        webviewView.onDidChangeVisibility(() => {
-            if (webviewView.visible) {
-                webviewView.webview.html = this._buildHtml();
-            }
-        });
     }
 
     /** Spawns pets from settings — used on panel load and config change. */
@@ -54,7 +58,11 @@ export class PetViewProvider implements vscode.WebviewViewProvider {
             return;
         }
 
-        this._postSpawn(mascot, count);
+        const tintColor = mascot.sprite.type === 'png-sheet' && mascot.sprite.tintable
+            ? mascot.sprite.defaultTintColor ?? '#7B48CC'
+            : undefined;
+
+        this._postSpawn(mascot, count, undefined, tintColor);
     }
 
     /** Interactive spawn — QuickPick mascot, optional name, add one at a time. */
@@ -75,8 +83,16 @@ export class PetViewProvider implements vscode.WebviewViewProvider {
 
         let tintColor: string | undefined;
         if (picked.mascot.sprite.type === 'png-sheet' && picked.mascot.sprite.tintable) {
-            tintColor = await _pickTintColor();
-            if (tintColor === undefined) { return; }
+            const result = await _pickTintColor();
+            if (result === undefined) { return; }   // user pressed Escape — cancel spawn
+            tintColor = result ?? undefined;         // null (no tint) → leave tintColor unset
+        }
+
+        let signBadgeId: string | undefined;
+        if (BadgeRegistry.getAll().length > 0) {
+            const result = await _pickSign();
+            if (result === undefined) { return; }    // user pressed Escape — cancel spawn
+            signBadgeId = result ?? undefined;       // null (no sign) → leave signBadgeId unset
         }
 
         const name = await vscode.window.showInputBox({
@@ -87,20 +103,85 @@ export class PetViewProvider implements vscode.WebviewViewProvider {
 
         if (name === undefined) { return; }  // user pressed Escape
 
-        this._postSpawn(picked.mascot, 1, name || randomPetName(picked.mascot.name), tintColor);
+        this._postSpawn(picked.mascot, 1, name || randomPetName(picked.mascot.name), tintColor, signBadgeId);
     }
 
-    private _postSpawn(mascot: MascotDefinition, count: number, name?: string, tintColor?: string) {
+    private _postSpawn(
+        mascot: MascotDefinition,
+        count: number,
+        name?: string,
+        tintColor?: string,
+        signBadgeId?: string
+    ) {
+        const ids = Array.from({ length: count ?? 1 }, () => crypto.randomUUID());
+
         this._view?.webview.postMessage({
             command: 'spawnPets',
             mascot: this._resolveUris(mascot, tintColor),
+            sign: this._resolveSign(signBadgeId),
             count,
-            name
+            name,
+            ids
         });
+
+        for (const id of ids) {
+            this._activePets.push({ id, mascotId: mascot.id, name: name ?? '', tintColor, signBadgeId });
+        }
+        this._persistActivePets();
     }
 
     public removeAllPets() {
         this._view?.webview.postMessage({ command: 'removeAllPets' });
+        this._activePets = [];
+        this._persistActivePets();
+    }
+
+    /** QuickPick one active pet, then remove just that one. */
+    public async removePetInteractive() {
+        const pet = await this._pickActivePet('Choose a pet to remove');
+        if (!pet) { return; }
+
+        this._view?.webview.postMessage({ command: 'removePet', id: pet.id });
+        this._activePets = this._activePets.filter(p => p.id !== pet.id);
+        this._persistActivePets();
+    }
+
+    /** QuickPick one active pet, then a new speed, applied live without respawning. */
+    public async adjustPetSpeedInteractive() {
+        const pet = await this._pickActivePet('Choose a pet to speed up or slow down');
+        if (!pet) { return; }
+
+        const picked = await vscode.window.showQuickPick(SPEED_PRESETS, {
+            placeHolder: 'Pick a new speed for this pet'
+        });
+        if (!picked) { return; }
+
+        pet.speedMultiplier = picked.multiplier;
+        this._view?.webview.postMessage({
+            command: 'updatePet',
+            id: pet.id,
+            speedMultiplier: picked.multiplier
+        });
+        this._persistActivePets();
+    }
+
+    /** Shows a QuickPick of currently active pets; returns the matching SavedPet. */
+    private async _pickActivePet(placeHolder: string): Promise<SavedPet | undefined> {
+        if (this._activePets.length === 0) {
+            vscode.window.showInformationMessage('No pets are currently active.');
+            return undefined;
+        }
+
+        const picked = await vscode.window.showQuickPick(
+            this._activePets.map(pet => ({
+                label: pet.name || MascotRegistry.get(pet.mascotId)?.name || pet.mascotId,
+                description: MascotRegistry.get(pet.mascotId)?.name ?? pet.mascotId,
+                pet
+            })),
+            { placeHolder }
+        );
+
+        return picked?.pet;
     }
 
     public async refreshBadges(username: string) {
@@ -118,8 +199,36 @@ export class PetViewProvider implements vscode.WebviewViewProvider {
     private async _handleMessage(msg: { command: string }) {
         switch (msg.command) {
             case 'ready': {
-                this.spawnPets();
+                // Webview just (re)started — reset in-memory tracking then restore
+                this._activePets = [];
                 const config = vscode.workspace.getConfiguration('pnpPets');
+
+                if (config.get<boolean>('persistPets', true)) {
+                    const saved = this._context.globalState.get<SavedPet[]>(this._savedPetsKey, []);
+                    if (saved.length > 0) {
+                        for (const pet of saved) {
+                            const mascot = MascotRegistry.get(pet.mascotId);
+                            if (!mascot) { continue; } // mascot was removed — skip it
+                            this._view?.webview.postMessage({
+                                command: 'spawnPets',
+                                mascot: this._resolveUris(mascot, pet.tintColor),
+                                sign: this._resolveSign(pet.signBadgeId),
+                                count: 1,
+                                name: pet.name,
+                                ids: [pet.id],
+                                ...(pet.speedMultiplier ? { speedMultiplier: pet.speedMultiplier } : {})
+                            });
+                            this._activePets.push(pet);
+                        }
+                        // Re-save in case any missing mascots were pruned
+                        this._persistActivePets();
+                    } else {
+                        this.spawnPets();
+                    }
+                } else {
+                    this.spawnPets();
+                }
+
                 const username = config.get<string>('credlyUsername', '');
                 if (username && config.get<boolean>('showBadgeStrip', true)) {
                     await this.refreshBadges(username);
@@ -132,6 +241,13 @@ export class PetViewProvider implements vscode.WebviewViewProvider {
             case 'requestRemoveAll':
                 this.removeAllPets();
                 break;
+            case 'openLink': {
+                const url = (msg as { url?: unknown }).url;
+                if (typeof url === 'string') {
+                    vscode.env.openExternal(vscode.Uri.parse(url));
+                }
+                break;
+            }
         }
     }
 
@@ -170,9 +286,32 @@ export class PetViewProvider implements vscode.WebviewViewProvider {
         return { ...mascot, sprite: resolvedSprite };
     }
 
+    private _resolveSign(signBadgeId?: string): ResolvedSign | undefined {
+        if (!signBadgeId) { return undefined; }
+        const badge = BadgeRegistry.get(signBadgeId);
+        if (!badge) { return undefined; } // badge was removed — skip it
+
+        return {
+            templateUri: this._mediaUri('signs/speech-bubble.svg'),
+            badgeImageUri: this._mediaUri(`badges/${badge.imageFile}`),
+            ...(badge.linkUrl ? { linkUrl: badge.linkUrl } : {})
+        };
+    }
+
+    private _persistActivePets() {
+        const config = vscode.workspace.getConfiguration('pnpPets');
+        if (config.get<boolean>('persistPets', true)) {
+            this._context.globalState.update(this._savedPetsKey, this._activePets);
+        }
+    }
+
     private _petUri(filename: string): string {
+        return this._mediaUri(`pets/${filename}`);
+    }
+
+    private _mediaUri(relativePath: string): string {
         return this._view!.webview.asWebviewUri(
-            vscode.Uri.joinPath(this._context.extensionUri, 'media', 'pets', filename)
+            vscode.Uri.joinPath(this._context.extensionUri, 'media', relativePath)
         ).toString();
     }
 
@@ -230,7 +369,7 @@ function generateNonce(): string {
 }
 
 const PET_NAME_PREFIXES = ['Sir', 'Lady', 'Captain', 'Dr.', 'Professor', 'Agent'];
-const PET_NAME_ADJECTIVES = ['Fluffy', 'Spiky', 'Snappy', 'Zippy', 'Wobbly', 'Grumpy', 'Bouncy', 'Dizzy'];
+const PET_NAME_ADJECTIVES = ['Fluffy', 'Spiky', 'Snappy', 'Zippy', 'Wobbly', 'Grumpy', 'Dizzy'];
 
 function randomPetName(mascotName: string): string {
     const prefix = PET_NAME_PREFIXES[Math.floor(Math.random() * PET_NAME_PREFIXES.length)];
@@ -238,8 +377,17 @@ function randomPetName(mascotName: string): string {
     return `${prefix} ${adj} ${mascotName}`;
 }
 
+const SPEED_PRESETS = [
+    { label: 'Very slow',  description: '0.4x', multiplier: 0.4 },
+    { label: 'Slow',       description: '0.7x', multiplier: 0.7 },
+    { label: 'Normal',     description: '1x (default)', multiplier: 1 },
+    { label: 'Fast',       description: '1.5x', multiplier: 1.5 },
+    { label: 'Very fast',  description: '2.5x', multiplier: 2.5 }
+];
+
 const TINT_PRESETS = [
-    { label: 'PnP Purple',  description: '#7B48CC', color: '#7B48CC' },
+    { label: 'No tint',     description: 'Spawn with original colors',  color: 'NONE' },
+    { label: 'Purple',      description: '#7B48CC', color: '#7B48CC' },
     { label: 'Teal',        description: '#00B4D8', color: '#00B4D8' },
     { label: 'Orange',      description: '#FF6600', color: '#FF6600' },
     { label: 'Red',         description: '#E53935', color: '#E53935' },
@@ -250,12 +398,14 @@ const TINT_PRESETS = [
     { label: 'Custom…',     description: 'Enter any hex color', color: '' },
 ];
 
-async function _pickTintColor(): Promise<string | undefined> {
+// Returns: a hex color string, undefined (user cancelled), or null (no tint chosen)
+async function _pickTintColor(): Promise<string | null | undefined> {
     const picked = await vscode.window.showQuickPick(TINT_PRESETS, {
         placeHolder: 'Pick a color for the tintable areas'
     });
 
-    if (!picked) { return undefined; }
+    if (!picked) { return undefined; }        // Escape — cancel the whole spawn
+    if (picked.color === 'NONE') { return null; } // No tint — spawn unmodified
 
     if (!picked.color) {
         return vscode.window.showInputBox({
@@ -267,4 +417,20 @@ async function _pickTintColor(): Promise<string | undefined> {
     }
 
     return picked.color;
+}
+
+// Returns: a badge ID, undefined (user cancelled), or null (no sign chosen)
+async function _pickSign(): Promise<string | null | undefined> {
+    const badges = BadgeRegistry.getAll();
+
+    const picked = await vscode.window.showQuickPick(
+        [
+            { label: 'No badge', description: 'Spawn without a badge/logo sign', id: null as string | null },
+            ...badges.map(b => ({ label: b.name, description: b.description, id: b.id }))
+        ],
+        { placeHolder: 'Have this pet hold up a badge or event logo?' }
+    );
+
+    if (!picked) { return undefined; } // Escape — cancel the whole spawn
+    return picked.id;
 }

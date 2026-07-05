@@ -35,11 +35,6 @@ const themes: ThemeDefinition[] = [
         id: 'build',
         name: 'Microsoft Build',
         background: 'linear-gradient(135deg, #00b7c3 0%, #005a9e 100%)'
-    },
-    {
-        id: 'community-days',
-        name: 'Community Days',
-        background: 'linear-gradient(135deg, #742774 0%, #c239b3 100%)'
     }
 ];
 

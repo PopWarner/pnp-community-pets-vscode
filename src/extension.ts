@@ -1,9 +1,11 @@
 import * as vscode from 'vscode';
 import { PetViewProvider } from './PetViewProvider';
 import { MascotRegistry } from './mascots/MascotRegistry';
+import { BadgeRegistry } from './mascots/BadgeRegistry';
 
 export async function activate(context: vscode.ExtensionContext) {
     await MascotRegistry.init(context.extensionUri);
+    await BadgeRegistry.init(context.extensionUri);
 
     const provider = new PetViewProvider(context);
 
@@ -20,6 +22,14 @@ export async function activate(context: vscode.ExtensionContext) {
 
         vscode.commands.registerCommand('pnpPets.removeAllPets', () => {
             provider.removeAllPets();
+        }),
+
+        vscode.commands.registerCommand('pnpPets.removePet', () => {
+            provider.removePetInteractive();
+        }),
+
+        vscode.commands.registerCommand('pnpPets.adjustPetSpeed', () => {
+            provider.adjustPetSpeedInteractive();
         }),
 
         vscode.commands.registerCommand('pnpPets.showBadges', async () => {

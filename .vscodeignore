@@ -1,9 +1,17 @@
 .vscode/**
 .vscode-test/**
+.claude/**
 src/**
 .gitignore
 **/tsconfig.json
 **/.eslintrc.json
+**/.markdownlint.json
 **/*.map
 **/*.ts
 node_modules/**
+package-lock.json
+docs/**
+BACKLOG.md
+temp/**
+templates/**
+**/*-original-*.png
