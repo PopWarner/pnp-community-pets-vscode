@@ -69,6 +69,11 @@ export interface SavedPet {
     signBadgeId?: string;
     /** Multiplier applied on top of the global pnpPets.speed setting. Default 1. */
     speedMultiplier?: number;
+    /** ID of an emote from the emote library, shown briefly above this pet's head when clicked. */
+    clickEmoteId?: string;
+    /** Whether the click emote is currently active. Kept separate from clickEmoteId
+     *  so turning it off doesn't lose which emote was chosen. Default true. */
+    clickEmoteEnabled?: boolean;
 }
 
 export interface BadgeDefinition {
@@ -79,6 +84,14 @@ export interface BadgeDefinition {
     imageFile: string;
     /** Optional URL opened when the sign is clicked (e.g. a Credly badge page or event site) */
     linkUrl?: string;
+}
+
+export interface EmoteDefinition {
+    id: string;
+    name: string;
+    description: string;
+    /** Emote image filename, relative to media/emotes/<id>/ */
+    imageFile: string;
 }
 
 export interface MascotDefinition {

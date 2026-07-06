@@ -10,6 +10,7 @@
     const SPEED = parseFloat(script.dataset.speed ?? '2');
     const ANIMATION_FPS = 8;
     const FRAME_MS = 1000 / ANIMATION_FPS;
+    const INTERACTION_EMOTE_URI = script.dataset.interactionEmote || null;
 
     // How many pixels from each edge counts as "at the wall/floor/ceiling"
     const SURFACE_MARGIN = 4;
@@ -17,6 +18,10 @@
     // Click-reaction bounce
     const REACT_DURATION = 350;
     const REACT_BOUNCE_HEIGHT = 8;
+
+    // Pet-to-pet proximity interaction
+    const INTERACTION_DISTANCE = 40;
+    const INTERACTION_CHANCE = 0.5;
 
     const mascots = [];
     let lastTick = 0;
@@ -333,15 +338,53 @@
     }
 
     // -------------------------------------------------------------------------
+    // Emote — a brief reaction icon shown above the head, e.g. on click.
+    // Deliberately independent of SignRenderer: emotes are transient and
+    // single-image, signs are persistent and template+badge composited.
+    // -------------------------------------------------------------------------
+
+    const EMOTE_SIZE     = 40;
+    const EMOTE_GAP      = 12;
+    const EMOTE_DURATION = 1800;
+
+    class EmoteRenderer {
+        constructor(imageUri) {
+            this.ready = false;
+            this._img = new Image();
+            this._img.onload = () => { this.ready = true; };
+            this._img.src = imageUri;
+        }
+
+        // Called from inside the mascot's rotated transform — (0, 0) is the
+        // mascot's own center, so this positions the emote relative to that.
+        draw(frameHeight) {
+            if (!this.ready) { return; }
+            const x = -EMOTE_SIZE / 2;
+            const y = -frameHeight / 2 - EMOTE_SIZE - EMOTE_GAP;
+            ctx.drawImage(this._img, x, y, EMOTE_SIZE, EMOTE_SIZE);
+        }
+    }
+
+    // -------------------------------------------------------------------------
     // Mascot
     // -------------------------------------------------------------------------
 
     class Mascot {
-        constructor(definition, name, sign, id, speedMultiplier) {
+        constructor(definition, opts = {}) {
+            const { name, sign, id, speedMultiplier, clickEmote, clickEmoteEnabled } = opts;
             this.id       = id || null;
             this.name     = name || '';
             this.speedMultiplier = speedMultiplier || 1;
-            this.signRenderer = sign ? new SignRenderer(sign) : null;
+            this.signRenderer  = sign ? new SignRenderer(sign) : null;
+            this.emoteRenderer = clickEmote ? new EmoteRenderer(clickEmote) : null;
+            this.clickEmoteEnabled = clickEmoteEnabled !== false;
+            this.emoteUntil = 0;
+
+            // Pet-to-pet interaction emote — deliberately separate from the
+            // personal click emote above, so the two never overwrite each other.
+            this._interactionEmoteRenderer = null;
+            this.interactionEmoteUntil = 0;
+            this._greetedNeighbor = false;
             const sprite = definition.sprite;
             if (sprite.type === 'png-sheet') {
                 this.renderer = new PngSheetRenderer(sprite);
@@ -373,6 +416,23 @@
         /** Triggers a brief "noticed" bounce, e.g. in response to a click. */
         react(now) {
             this.reactUntil = now + REACT_DURATION;
+        }
+
+        /** Shows this pet's click emote briefly, if it has one and it's enabled. */
+        showEmote(now) {
+            if (this.emoteRenderer && this.clickEmoteEnabled) {
+                this.emoteUntil = now + EMOTE_DURATION;
+            }
+        }
+
+        /** Shows a shared pet-to-pet interaction emote briefly, and pauses
+         *  this pet (holding its idle pose) for exactly as long as it's shown. */
+        showInteractionEmote(now, renderer) {
+            this._interactionEmoteRenderer = renderer;
+            this.interactionEmoteUntil = now + EMOTE_DURATION;
+            this.petState = PetState.IDLE;
+            this.idleElapsed = 0;
+            this.idleDuration = EMOTE_DURATION;
         }
 
         // Converts a canvas point into this mascot's local, pre-rotation
@@ -555,9 +615,21 @@
                 _drawName(this.name, x + this.renderer.frameWidth / 2, y - 6);
             }
 
-            if (this.signRenderer) {
-                const fw = this.renderer.frameWidth;
-                const fh = this.renderer.frameHeight;
+            // Precedence for the above-head slot: interaction emote > click
+            // emote > sign. Each one resumes automatically once whichever is
+            // ahead of it expires — no explicit "restore" logic needed.
+            const fw = this.renderer.frameWidth;
+            const fh = this.renderer.frameHeight;
+
+            if (this._interactionEmoteRenderer && now < this.interactionEmoteUntil) {
+                _drawRotated(x, y, fw, fh, rotation, () => {
+                    this._interactionEmoteRenderer.draw(fh);
+                });
+            } else if (this.emoteRenderer && now < this.emoteUntil) {
+                _drawRotated(x, y, fw, fh, rotation, () => {
+                    this.emoteRenderer.draw(fh);
+                });
+            } else if (this.signRenderer) {
                 _drawRotated(x, y, fw, fh, rotation, () => {
                     this.signRenderer.draw(fh);
                 });
@@ -591,6 +663,9 @@
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         for (const m of mascots) {
             m.update(now, delta);
+        }
+        _checkPetInteractions(now);
+        for (const m of mascots) {
             m.draw(now);
         }
 
@@ -598,6 +673,56 @@
     }
 
     requestAnimationFrame(tick);
+
+    // -------------------------------------------------------------------------
+    // Pet-to-pet proximity interactions — reuses the Emote system, no new
+    // sprite frames needed. Good enough for a handful of pets; with several
+    // clustered together the "already greeted" tracking can be imprecise,
+    // acceptable for an occasional flourish rather than core logic.
+    // -------------------------------------------------------------------------
+
+    let _interactionEmoteRenderer = null;
+
+    function _getInteractionEmoteRenderer() {
+        if (!INTERACTION_EMOTE_URI) { return null; }
+        if (!_interactionEmoteRenderer) {
+            _interactionEmoteRenderer = new EmoteRenderer(INTERACTION_EMOTE_URI);
+        }
+        return _interactionEmoteRenderer;
+    }
+
+    function _checkPetInteractions(now) {
+        const renderer = _getInteractionEmoteRenderer();
+        if (!renderer) { return; }
+
+        for (let i = 0; i < mascots.length; i++) {
+            const a = mascots[i];
+            if (a.surface !== Surface.FLOOR) { continue; }
+
+            for (let j = i + 1; j < mascots.length; j++) {
+                const b = mascots[j];
+                if (b.surface !== Surface.FLOOR) { continue; }
+
+                const centerA = a.x + a.renderer.frameWidth / 2;
+                const centerB = b.x + b.renderer.frameWidth / 2;
+                const near = Math.abs(centerA - centerB) < INTERACTION_DISTANCE;
+
+                if (near && !a._greetedNeighbor && !b._greetedNeighbor) {
+                    if (Math.random() < INTERACTION_CHANCE) {
+                        a.showInteractionEmote(now, renderer);
+                        b.showInteractionEmote(now, renderer);
+                        a.react(now);
+                        b.react(now);
+                    }
+                    a._greetedNeighbor = true;
+                    b._greetedNeighbor = true;
+                } else if (!near) {
+                    a._greetedNeighbor = false;
+                    b._greetedNeighbor = false;
+                }
+            }
+        }
+    }
 
     // -------------------------------------------------------------------------
     // Click handling — hit-test topmost-first, react to a body click, open the
@@ -614,11 +739,17 @@
             const hit = m.hitTest(clickX, clickY);
             if (!hit) { continue; }
 
+            const now = performance.now();
+
             if (hit === 'sign' && m.signRenderer.linkUrl) {
                 vscode.postMessage({ command: 'openLink', url: m.signRenderer.linkUrl });
             }
 
-            m.react(performance.now());
+            if (hit === 'body') {
+                m.showEmote(now);
+            }
+
+            m.react(now);
             break;
         }
     });
@@ -657,9 +788,16 @@
         const { command } = event.data;
         switch (command) {
             case 'spawnPets': {
-                const { mascot, count, name, sign, ids, speedMultiplier } = event.data;
+                const { mascot, count, name, sign, ids, speedMultiplier, clickEmote, clickEmoteEnabled } = event.data;
                 for (let i = 0; i < (count ?? 1); i++) {
-                    mascots.push(new Mascot(mascot, name, sign, ids ? ids[i] : undefined, speedMultiplier));
+                    mascots.push(new Mascot(mascot, {
+                        name,
+                        sign,
+                        id: ids ? ids[i] : undefined,
+                        speedMultiplier,
+                        clickEmote,
+                        clickEmoteEnabled
+                    }));
                 }
                 break;
             }

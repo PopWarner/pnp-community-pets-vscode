@@ -1,0 +1,6 @@
+{
+  "$schema": "../../emote.schema.json",
+  "name": "X Mark",
+  "description": "Failure / error",
+  "imageFile": "x-mark.svg"
+}

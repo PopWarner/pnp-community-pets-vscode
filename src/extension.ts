@@ -2,10 +2,12 @@ import * as vscode from 'vscode';
 import { PetViewProvider } from './PetViewProvider';
 import { MascotRegistry } from './mascots/MascotRegistry';
 import { BadgeRegistry } from './mascots/BadgeRegistry';
+import { EmoteRegistry } from './mascots/EmoteRegistry';
 
 export async function activate(context: vscode.ExtensionContext) {
     await MascotRegistry.init(context.extensionUri);
     await BadgeRegistry.init(context.extensionUri);
+    await EmoteRegistry.init(context.extensionUri);
 
     const provider = new PetViewProvider(context);
 

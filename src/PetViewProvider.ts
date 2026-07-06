@@ -3,6 +3,7 @@ import * as crypto from 'crypto';
 import { MascotDefinition, SavedPet, SpriteConfig } from './mascots/types';
 import { MascotRegistry } from './mascots/MascotRegistry';
 import { BadgeRegistry } from './mascots/BadgeRegistry';
+import { EmoteRegistry } from './mascots/EmoteRegistry';
 import { ThemeManager } from './themes/ThemeManager';
 import { CredlyService } from './credly/CredlyService';
 
@@ -10,6 +11,13 @@ interface ResolvedSign {
     templateUri: string;
     badgeImageUri: string;
     linkUrl?: string;
+}
+
+interface SpawnOptions {
+    name?: string;
+    tintColor?: string;
+    signBadgeId?: string;
+    clickEmoteId?: string;
 }
 
 export class PetViewProvider implements vscode.WebviewViewProvider {
@@ -62,7 +70,7 @@ export class PetViewProvider implements vscode.WebviewViewProvider {
             ? mascot.sprite.defaultTintColor ?? '#7B48CC'
             : undefined;
 
-        this._postSpawn(mascot, count, undefined, tintColor);
+        this._postSpawn(mascot, count, { tintColor });
     }
 
     /** Interactive spawn — QuickPick mascot, optional name, add one at a time. */
@@ -95,6 +103,13 @@ export class PetViewProvider implements vscode.WebviewViewProvider {
             signBadgeId = result ?? undefined;       // null (no sign) → leave signBadgeId unset
         }
 
+        let clickEmoteId: string | undefined;
+        if (EmoteRegistry.getAll().length > 0) {
+            const result = await _pickClickEmote();
+            if (result === undefined) { return; }     // user pressed Escape — cancel spawn
+            clickEmoteId = result ?? undefined;       // null (none) → leave clickEmoteId unset
+        }
+
         const name = await vscode.window.showInputBox({
             prompt: 'Give your pet a name (optional)',
             placeHolder: randomPetName(picked.mascot.name),
@@ -103,29 +118,33 @@ export class PetViewProvider implements vscode.WebviewViewProvider {
 
         if (name === undefined) { return; }  // user pressed Escape
 
-        this._postSpawn(picked.mascot, 1, name || randomPetName(picked.mascot.name), tintColor, signBadgeId);
+        this._postSpawn(picked.mascot, 1, {
+            name: name || randomPetName(picked.mascot.name),
+            tintColor,
+            signBadgeId,
+            clickEmoteId
+        });
     }
 
-    private _postSpawn(
-        mascot: MascotDefinition,
-        count: number,
-        name?: string,
-        tintColor?: string,
-        signBadgeId?: string
-    ) {
+    private _postSpawn(mascot: MascotDefinition, count: number, opts: SpawnOptions = {}) {
+        const { name, tintColor, signBadgeId, clickEmoteId } = opts;
         const ids = Array.from({ length: count ?? 1 }, () => crypto.randomUUID());
 
         this._view?.webview.postMessage({
             command: 'spawnPets',
             mascot: this._resolveUris(mascot, tintColor),
             sign: this._resolveSign(signBadgeId),
+            clickEmote: this._resolveEmoteUri(clickEmoteId),
+            clickEmoteEnabled: true,
             count,
             name,
             ids
         });
 
         for (const id of ids) {
-            this._activePets.push({ id, mascotId: mascot.id, name: name ?? '', tintColor, signBadgeId });
+            this._activePets.push({
+                id, mascotId: mascot.id, name: name ?? '', tintColor, signBadgeId, clickEmoteId
+            });
         }
         this._persistActivePets();
     }
@@ -213,6 +232,8 @@ export class PetViewProvider implements vscode.WebviewViewProvider {
                                 command: 'spawnPets',
                                 mascot: this._resolveUris(mascot, pet.tintColor),
                                 sign: this._resolveSign(pet.signBadgeId),
+                                clickEmote: this._resolveEmoteUri(pet.clickEmoteId),
+                                clickEmoteEnabled: pet.clickEmoteEnabled !== false,
                                 count: 1,
                                 name: pet.name,
                                 ids: [pet.id],
@@ -298,6 +319,15 @@ export class PetViewProvider implements vscode.WebviewViewProvider {
         };
     }
 
+    /** Resolves any emote ID to its media URI. Used for both per-pet click
+     *  emotes and the shared pet-to-pet interaction emote. */
+    private _resolveEmoteUri(emoteId?: string): string | undefined {
+        if (!emoteId) { return undefined; }
+        const emote = EmoteRegistry.get(emoteId);
+        if (!emote) { return undefined; } // emote was removed — skip it
+        return this._mediaUri(`emotes/${emote.imageFile}`);
+    }
+
     private _persistActivePets() {
         const config = vscode.workspace.getConfiguration('pnpPets');
         if (config.get<boolean>('persistPets', true)) {
@@ -332,6 +362,10 @@ export class PetViewProvider implements vscode.WebviewViewProvider {
                 vscode.Uri.joinPath(this._context.extensionUri, 'media', file)
             ).toString();
 
+        // Hardcoded to the "heart" sample emote for now — pet-to-pet interactions
+        // aren't user-configurable yet, so there's no setting to read this from.
+        const interactionEmoteUri = this._resolveEmoteUri('heart') ?? '';
+
         const nonce = generateNonce();
 
         const csp = [
@@ -357,7 +391,8 @@ export class PetViewProvider implements vscode.WebviewViewProvider {
     <script nonce="${nonce}"
             src="${uri('webview/canvas.js')}"
             data-speed="${speed}"
-            data-theme="${activeTheme.id}"></script>
+            data-theme="${activeTheme.id}"
+            data-interaction-emote="${interactionEmoteUri}"></script>
 </body>
 </html>`;
     }
@@ -429,6 +464,22 @@ async function _pickSign(): Promise<string | null | undefined> {
             ...badges.map(b => ({ label: b.name, description: b.description, id: b.id }))
         ],
         { placeHolder: 'Have this pet hold up a badge or event logo?' }
+    );
+
+    if (!picked) { return undefined; } // Escape — cancel the whole spawn
+    return picked.id;
+}
+
+// Returns: an emote ID, undefined (user cancelled), or null (no click reaction chosen)
+async function _pickClickEmote(): Promise<string | null | undefined> {
+    const emotes = EmoteRegistry.getAll();
+
+    const picked = await vscode.window.showQuickPick(
+        [
+            { label: 'No click reaction', description: 'Just the bounce, no emote', id: null as string | null },
+            ...emotes.map(e => ({ label: e.name, description: e.description, id: e.id }))
+        ],
+        { placeHolder: 'Pick a reaction to show when this pet is clicked' }
     );
 
     if (!picked) { return undefined; } // Escape — cancel the whole spawn

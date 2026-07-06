@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PnP Community Pets: Emote Library Manifest",
+  "description": "Drop this file in your emote folder under media/emotes/<your-emote>/emote.json",
+  "type": "object",
+  "required": ["name", "imageFile"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "id": {
+      "type": "string",
+      "description": "Unique ID for this emote. Defaults to the folder name if omitted.",
+      "pattern": "^[a-z0-9-]+$"
+    },
+    "name": {
+      "type": "string",
+      "description": "Display name shown in the emote picker."
+    },
+    "description": {
+      "type": "string",
+      "description": "One-line description shown in the emote picker."
+    },
+    "imageFile": {
+      "type": "string",
+      "description": "Filename of the emote image (PNG, SVG, or GIF; transparent background recommended), relative to this folder."
+    }
+  }
+}
