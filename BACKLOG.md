@@ -4,6 +4,16 @@ Ideas, planned features, and community suggestions. Open a GitHub Discussion to 
 
 ---
 
+## Where things stand (2026-07-05)
+
+Last commit: `ab430a9` "Added Emotes and associated intiial functionality." — committed and pushed, in sync with `origin/main`, nothing uncommitted.
+
+**Shipped and working:** core animated panel, multiple pets, persistence across restarts, Credly badge strip, spawn/remove/name/tint pickers, individual pet removal + live speed adjustment, the badge/sign library, and the new Emote system (see below) including click reactions and pet-to-pet proximity interactions.
+
+**Most natural next step:** VS Code Event Reactions (build success/fail, file saved, etc.) — the Emote system was built specifically so this wouldn't need new sprite art. See that section below for the concrete plan.
+
+---
+
 ## MVP: v0.1 (Get Something Moving)
 
 - [ ] Basic animated mascot panel: sprite walking/idle loop on canvas
@@ -82,6 +92,34 @@ Ideas, planned features, and community suggestions. Open a GitHub Discussion to 
 
 ---
 
+## Emotes: v0.3 (shipped)
+
+A brief reaction icon shown above a pet's head — deliberately built independent of the sign/badge system (own type, own registry, own renderer, own file) even though it looks structurally similar, so the two can diverge freely.
+
+- [x] Emote library (`media/emotes/<id>/emote.json`, auto-discovered, no-code contribution like badges/mascots), `emote.schema.json` at repo root
+- [x] 5 sample icons to test with (`exclamation`, `checkmark`, `x-mark`, `heart`, `star`) — simple SVGs, not final production art
+- [x] Per-pet click reaction: picked at spawn time (after badge/sign), stored as `clickEmoteId` separately from `clickEmoteEnabled` so toggling it off later won't lose which one was chosen
+- [x] Clicking a pet's body shows its emote for ~1.8s and triggers the bounce; clicking its sign still opens the badge link and does not show the click emote
+- [x] Precedence when both a sign and an emote could occupy the above-head slot: interaction emote → click emote → sign, each resumes automatically once whichever's ahead of it expires, no explicit restore logic
+- [x] **Pet-to-pet proximity interactions** (this replaces the old "Pet Interactions" plan below — no new mascot art needed): two pets both on the floor that come within ~40px roll a 50/50 chance to pause, bounce, and show a shared heart emote together, then resume walking in a new random direction. Uses one shared `EmoteRenderer` instance (hardcoded to the "heart" sample emote), independent of either pet's personal click emote.
+- [ ] `clickEmoteEnabled` toggle isn't exposed in any UI yet — the data model supports "keep the choice, turn it off" but there's no command for it
+- [ ] Live emote editing on an already-spawned pet (same stable-ID + `updatePet` pattern as speed adjustment)
+- [ ] Interaction emote is hardcoded to "heart" — no setting to change it, and pairing/multi-pet-cluster tracking is a simplification (see comment in `_checkPetInteractions`)
+- [ ] Replace the 5 sample icons with real production art when ready
+
+---
+
+## VS Code Event Reactions: v0.4+ (next up — infra now exists)
+
+- [ ] **Build success** → show an emote (e.g. checkmark) above one or all active pets
+- [ ] **Build failure / errors in Problems panel** → show an emote (e.g. x-mark)
+- [ ] **File saved** → quick emote or the existing click-style bounce
+- [ ] **Terminal opens**, **long coding session**, **new Credly badge earned** → same pattern, different triggers
+- [ ] Hook into `vscode.tasks.onDidEndTaskProcess` (exit code tells success/fail), `vscode.workspace.onDidSaveTextDocument`, `vscode.window.onDidOpenTerminal`
+- [ ] Plan: extension listens for the event → resolves an emote URI (same `_resolveEmoteUri` used for click/interaction emotes) → sends a new `showEmote` postMessage with a target (`all` pets or a specific pet ID) → webview calls the same `showEmote`/`showInteractionEmote`-style mechanism already built. No new rendering code needed, just a new trigger source and a message handler.
+
+---
+
 ## Individual Pet Management: v0.3 (shipped)
 
 - [x] Stable per-pet ID assigned at spawn time (`crypto.randomUUID()`), tracked through persistence and restore
@@ -128,24 +166,14 @@ Ideas, planned features, and community suggestions. Open a GitHub Discussion to 
 
 ---
 
-## Pet Interactions: v0.4+
+## Pet Interactions: shipped via Emotes (see above), further ideas below
 
-- [ ] **Proximity interactions**: when two pets come within range on the floor, trigger a brief interaction animation (wave, bow, high-five) before continuing on their way
-- [ ] Interaction animation frame support in mascot.json (`rows.interact` for PNG sheets, `frames.interact` for SVG/GIF)
-- [ ] Pets can "notice" each other and change direction to approach
-- [ ] Different interaction types per mascot pair (friendly / playful / shy)
+The core proximity-interaction mechanic is done (see the Emotes section). Ideas for building on it:
 
----
-
-## VS Code Event Reactions: v0.4+
-
-- [ ] **Build success** → celebrate animation (arms up, spin)
-- [ ] **Build failure / errors in Problems panel** → sad/worried animation
-- [ ] **Long coding session (no breaks)** → yawn/stretch idle variant
-- [ ] **Terminal opens** → pets scatter or look startled
-- [ ] **File saved** → quick tail wag or thumbs-up
-- [ ] **New badge earned (Credly)** → fanfare animation + notification
-- [ ] Hook into `vscode.tasks.onDidEndTask`, `vscode.languages.onDidChangeDiagnostics`
+- [ ] Pets can "notice" each other and actively change direction/pace to approach, rather than only reacting when a walk cycle happens to bring them close
+- [ ] Different interaction emotes per mascot pair or per personality, instead of always "heart"
+- [ ] Configurable interaction chance/distance (currently hardcoded 50% / 40px in `canvas.js`)
+- [ ] More robust multi-pet tracking for 3+ pets clustered together (current `_greetedNeighbor` flag is a simplification, fine for a couple of pets passing by, not precise with a crowd)
 
 ---
 
