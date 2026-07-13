@@ -1,0 +1,6 @@
+{
+  "$schema": "../../emote.schema.json",
+  "name": "Bug",
+  "description": "Debug session started",
+  "imageFile": "bug.png"
+}

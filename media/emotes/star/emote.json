@@ -2,5 +2,5 @@
   "$schema": "../../emote.schema.json",
   "name": "Star",
   "description": "Celebration / highlight",
-  "imageFile": "star.svg"
+  "imageFile": "star.png"
 }

@@ -59,6 +59,11 @@
                 "command": "pnpPets.adjustPetSpeed",
                 "title": "Adjust Pet Speed",
                 "category": "PnP Pets"
+            },
+            {
+                "command": "pnpPets.testEventReaction",
+                "title": "Test Event Reaction",
+                "category": "PnP Pets"
             }
         ],
         "menus": {
@@ -132,6 +137,149 @@
                     "type": "boolean",
                     "default": true,
                     "description": "Show your Credly badges in a strip at the bottom of the pet panel"
+                },
+                "pnpPets.enableEventReactions": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Show temporary emotes when VS Code events happen, such as saving files, opening terminals, ending tasks, or debugging"
+                },
+                "pnpPets.eventReactions.fileSaved.enabled": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Show an event emote when a file is saved"
+                },
+                "pnpPets.eventReactions.fileSaved.emoteId": {
+                    "type": "string",
+                    "default": "sparkle",
+                    "enum": ["approved", "branch", "breakpoint", "bug", "checkmark", "coffee", "crown", "exclamation", "eyes", "fire", "heart", "hmm", "hourglass", "lightbulb", "lightning", "new", "nice", "oops", "party-popper", "pencil", "question-mark", "rocket", "ship-it", "sleep", "sparkle", "star", "stop", "terminal", "trash", "trophy", "warning", "wave", "x-mark"],
+                    "description": "Emote shown when a file is saved"
+                },
+                "pnpPets.eventReactions.fileSaved.target": {
+                    "type": "string",
+                    "default": "random",
+                    "enum": ["random", "all"],
+                    "enumDescriptions": ["One random active pet reacts", "All active pets react"],
+                    "description": "Which pets react when a file is saved"
+                },
+                "pnpPets.eventReactions.fileSaved.bounce": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Bounce the pet when a file-saved emote appears"
+                },
+                "pnpPets.eventReactions.taskSucceeded.enabled": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Show an event emote when a VS Code task succeeds"
+                },
+                "pnpPets.eventReactions.taskSucceeded.emoteId": {
+                    "type": "string",
+                    "default": "checkmark",
+                    "enum": ["approved", "branch", "breakpoint", "bug", "checkmark", "coffee", "crown", "exclamation", "eyes", "fire", "heart", "hmm", "hourglass", "lightbulb", "lightning", "new", "nice", "oops", "party-popper", "pencil", "question-mark", "rocket", "ship-it", "sleep", "sparkle", "star", "stop", "terminal", "trash", "trophy", "warning", "wave", "x-mark"],
+                    "description": "Emote shown when a VS Code task succeeds"
+                },
+                "pnpPets.eventReactions.taskSucceeded.target": {
+                    "type": "string",
+                    "default": "random",
+                    "enum": ["random", "all"],
+                    "enumDescriptions": ["One random active pet reacts", "All active pets react"],
+                    "description": "Which pets react when a VS Code task succeeds"
+                },
+                "pnpPets.eventReactions.taskSucceeded.bounce": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Bounce the pet when a task-success emote appears"
+                },
+                "pnpPets.eventReactions.taskFailed.enabled": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Show an event emote when a VS Code task fails"
+                },
+                "pnpPets.eventReactions.taskFailed.emoteId": {
+                    "type": "string",
+                    "default": "x-mark",
+                    "enum": ["approved", "branch", "breakpoint", "bug", "checkmark", "coffee", "crown", "exclamation", "eyes", "fire", "heart", "hmm", "hourglass", "lightbulb", "lightning", "new", "nice", "oops", "party-popper", "pencil", "question-mark", "rocket", "ship-it", "sleep", "sparkle", "star", "stop", "terminal", "trash", "trophy", "warning", "wave", "x-mark"],
+                    "description": "Emote shown when a VS Code task fails"
+                },
+                "pnpPets.eventReactions.taskFailed.target": {
+                    "type": "string",
+                    "default": "random",
+                    "enum": ["random", "all"],
+                    "enumDescriptions": ["One random active pet reacts", "All active pets react"],
+                    "description": "Which pets react when a VS Code task fails"
+                },
+                "pnpPets.eventReactions.taskFailed.bounce": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Bounce the pet when a task-failure emote appears"
+                },
+                "pnpPets.eventReactions.terminalOpened.enabled": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Show an event emote when a terminal is opened"
+                },
+                "pnpPets.eventReactions.terminalOpened.emoteId": {
+                    "type": "string",
+                    "default": "terminal",
+                    "enum": ["approved", "branch", "breakpoint", "bug", "checkmark", "coffee", "crown", "exclamation", "eyes", "fire", "heart", "hmm", "hourglass", "lightbulb", "lightning", "new", "nice", "oops", "party-popper", "pencil", "question-mark", "rocket", "ship-it", "sleep", "sparkle", "star", "stop", "terminal", "trash", "trophy", "warning", "wave", "x-mark"],
+                    "description": "Emote shown when a terminal is opened"
+                },
+                "pnpPets.eventReactions.terminalOpened.target": {
+                    "type": "string",
+                    "default": "random",
+                    "enum": ["random", "all"],
+                    "enumDescriptions": ["One random active pet reacts", "All active pets react"],
+                    "description": "Which pets react when a terminal is opened"
+                },
+                "pnpPets.eventReactions.terminalOpened.bounce": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Bounce the pet when a terminal-opened emote appears"
+                },
+                "pnpPets.eventReactions.debugStarted.enabled": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Show an event emote when debugging starts"
+                },
+                "pnpPets.eventReactions.debugStarted.emoteId": {
+                    "type": "string",
+                    "default": "bug",
+                    "enum": ["approved", "branch", "breakpoint", "bug", "checkmark", "coffee", "crown", "exclamation", "eyes", "fire", "heart", "hmm", "hourglass", "lightbulb", "lightning", "new", "nice", "oops", "party-popper", "pencil", "question-mark", "rocket", "ship-it", "sleep", "sparkle", "star", "stop", "terminal", "trash", "trophy", "warning", "wave", "x-mark"],
+                    "description": "Emote shown when debugging starts"
+                },
+                "pnpPets.eventReactions.debugStarted.target": {
+                    "type": "string",
+                    "default": "random",
+                    "enum": ["random", "all"],
+                    "enumDescriptions": ["One random active pet reacts", "All active pets react"],
+                    "description": "Which pets react when debugging starts"
+                },
+                "pnpPets.eventReactions.debugStarted.bounce": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Bounce the pet when a debug-started emote appears"
+                },
+                "pnpPets.eventReactions.debugStopped.enabled": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Show an event emote when debugging stops"
+                },
+                "pnpPets.eventReactions.debugStopped.emoteId": {
+                    "type": "string",
+                    "default": "stop",
+                    "enum": ["approved", "branch", "breakpoint", "bug", "checkmark", "coffee", "crown", "exclamation", "eyes", "fire", "heart", "hmm", "hourglass", "lightbulb", "lightning", "new", "nice", "oops", "party-popper", "pencil", "question-mark", "rocket", "ship-it", "sleep", "sparkle", "star", "stop", "terminal", "trash", "trophy", "warning", "wave", "x-mark"],
+                    "description": "Emote shown when debugging stops"
+                },
+                "pnpPets.eventReactions.debugStopped.target": {
+                    "type": "string",
+                    "default": "random",
+                    "enum": ["random", "all"],
+                    "enumDescriptions": ["One random active pet reacts", "All active pets react"],
+                    "description": "Which pets react when debugging stops"
+                },
+                "pnpPets.eventReactions.debugStopped.bounce": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Bounce the pet when a debug-stopped emote appears"
                 }
             }
         }

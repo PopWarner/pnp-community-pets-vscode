@@ -1,0 +1,6 @@
+{
+  "$schema": "../../emote.schema.json",
+  "name": "Hourglass",
+  "description": "Waiting on a long-running task",
+  "imageFile": "hourglass.png"
+}

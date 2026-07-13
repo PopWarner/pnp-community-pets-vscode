@@ -1,0 +1,6 @@
+{
+  "$schema": "../../emote.schema.json",
+  "name": "Terminal",
+  "description": "Terminal opened",
+  "imageFile": "terminal.png"
+}

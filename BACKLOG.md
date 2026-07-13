@@ -10,6 +10,8 @@ Last commit: `ab430a9` "Added Emotes and associated intiial functionality." — 
 
 **Shipped and working:** core animated panel, multiple pets, persistence across restarts, Credly badge strip, spawn/remove/name/tint pickers, individual pet removal + live speed adjustment, the badge/sign library, and the new Emote system (see below) including click reactions and pet-to-pet proximity interactions.
 
+**In progress after `2c4f21d`:** VS Code Event Reactions architecture has started. Event-triggered emotes now use their own transient "event" lane in the canvas, separate from each pet's user-selected click emote. Precedence for the above-head slot is pet-to-pet interaction -> VS Code event reaction -> user click emote -> persistent sign, so event reactions can appear without overwriting a pet's chosen click reaction.
+
 **Most natural next step:** VS Code Event Reactions (build success/fail, file saved, etc.) — the Emote system was built specifically so this wouldn't need new sprite art. See that section below for the concrete plan.
 
 ---
@@ -57,6 +59,9 @@ Last commit: `ab430a9` "Added Emotes and associated intiial functionality." — 
 
 - [ ] Parker the Porcupine: official PnP mascot (parker-ms.svg, pnp/media repo). **MVP**
 - [ ] Animated walk-cycle frames for Parker (currently single SVG, all states)
+- [x] Bit: Power Platform mascot source/reference SVG added under `media/pets/bit-chroma/`
+- [ ] Bit static 8-bit pass: render the full uncropped SVG reference first, then create an approved static pixel-art version before adding `mascot.json`
+- [ ] Bit animation pass: build a real walk cycle only after the static 8-bit version is approved
 - [ ] Additional community-submitted mascots: open to submissions
 - [ ] Community contributor mascot (unlocked by specific Credly badge)
 - [ ] "Surprise" mascot unlocked by Easter egg command
@@ -109,7 +114,29 @@ A brief reaction icon shown above a pet's head — deliberately built independen
 
 ---
 
-## VS Code Event Reactions: v0.4+ (next up — infra now exists)
+## VS Code Event Reactions: v0.4+ (in progress)
+
+- [x] Generic architecture: extension listens for events -> resolves an emote URI -> sends a `showEmote` postMessage with target/bounce metadata -> webview shows a transient event emote without changing click-emote choices
+- [x] Master setting: `pnpPets.enableEventReactions`
+- [x] Default reaction map lives in `EVENT_REACTION_DEFAULTS`; users can override per-event behavior with Settings UI fields for enabled, emote, target, and bounce
+- [x] Manual smoke-test command: `PnP Pets: Test Event Reaction`
+- [x] **File saved** -> random pet shows `sparkle`
+- [x] **Build/task success** -> random pet shows `checkmark` by default
+- [x] **Build/task failure** -> random pet shows `x-mark` by default
+- [x] **Terminal opens** -> random pet shows `terminal`
+- [x] **Debug starts** -> random pet shows `bug`
+- [x] **Debug stops** -> random pet shows `stop`
+- [x] First expanded emote pack: event icons plus fun extras such as coffee, party popper, rocket, trophy, warning, fire, lightning, eyes, wave, sleep, crown, and more
+- [x] Raster polish pass: generated glossy transparent PNG replacements for the full bundled emote set while keeping the original SVGs as source/reference files
+- [ ] Problems panel / diagnostics changed -> warning or clear-state emote
+- [ ] Long coding session / idle return -> coffee/sleep/wave style emotes
+- [ ] New Credly badge earned -> badge sparkle
+- [x] Per-event settings and target preferences (`enabled`, `emoteId`, `target`, `bounce`)
+- [x] User-facing Settings UI uses per-event checkboxes/dropdowns instead of a single object editor
+- [x] Default target is `random` for all event reactions so the panel stays lively without becoming too chaotic
+- [ ] Event throttling/debounce so very noisy save/task loops do not spam the pets
+
+Previous planning notes:
 
 - [ ] **Build success** → show an emote (e.g. checkmark) above one or all active pets
 - [ ] **Build failure / errors in Problems panel** → show an emote (e.g. x-mark)

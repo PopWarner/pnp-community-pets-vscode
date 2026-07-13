@@ -1,0 +1,6 @@
+{
+  "$schema": "../../emote.schema.json",
+  "name": "Stop",
+  "description": "Debug or task stopped",
+  "imageFile": "stop.png"
+}

@@ -20,6 +20,34 @@ interface SpawnOptions {
     clickEmoteId?: string;
 }
 
+export type EventReactionId =
+    | 'fileSaved'
+    | 'taskSucceeded'
+    | 'taskFailed'
+    | 'terminalOpened'
+    | 'debugStarted'
+    | 'debugStopped';
+
+type EmoteTarget = 'all' | 'random';
+
+interface EventReactionConfig {
+    enabled: boolean;
+    emoteId: string;
+    target: EmoteTarget;
+    bounce: boolean;
+}
+
+type EventReactionOverrides = Partial<Record<EventReactionId, Partial<EventReactionConfig>>>;
+
+const EVENT_REACTION_DEFAULTS: Record<EventReactionId, EventReactionConfig> = {
+    fileSaved:      { enabled: true, emoteId: 'sparkle',  target: 'random', bounce: true },
+    taskSucceeded:  { enabled: true, emoteId: 'checkmark', target: 'random', bounce: true },
+    taskFailed:     { enabled: true, emoteId: 'x-mark',    target: 'random', bounce: true },
+    terminalOpened: { enabled: true, emoteId: 'terminal',  target: 'random', bounce: true },
+    debugStarted:   { enabled: true, emoteId: 'bug',       target: 'random', bounce: true },
+    debugStopped:   { enabled: true, emoteId: 'stop',      target: 'random', bounce: false }
+} as const;
+
 export class PetViewProvider implements vscode.WebviewViewProvider {
     public static readonly viewType = 'pnpPets.petView';
 
@@ -208,6 +236,26 @@ export class PetViewProvider implements vscode.WebviewViewProvider {
         const badges = await CredlyService.fetchBadges(username);
         const profileUrl = CredlyService.getProfileUrl(username);
         this._view.webview.postMessage({ command: 'updateBadges', badges, profileUrl });
+    }
+
+    public showEventReaction(reactionId: EventReactionId) {
+        const config = vscode.workspace.getConfiguration('pnpPets');
+        if (!config.get<boolean>('enableEventReactions', true)) { return; }
+
+        const reaction = getEventReactionConfig(config, reactionId);
+        if (!reaction.enabled) { return; }
+        if (!this._view || !reaction) { return; }
+
+        const emoteUri = this._resolveEmoteUri(reaction.emoteId);
+        if (!emoteUri) { return; }
+
+        this._view.webview.postMessage({
+            command: 'showEmote',
+            emote: emoteUri,
+            source: 'event',
+            target: reaction.target,
+            bounce: reaction.bounce
+        });
     }
 
     public onConfigChanged() {
@@ -401,6 +449,41 @@ export class PetViewProvider implements vscode.WebviewViewProvider {
 function generateNonce(): string {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     return Array.from({ length: 32 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+}
+
+function getEventReactionConfig(
+    config: vscode.WorkspaceConfiguration,
+    reactionId: EventReactionId
+): EventReactionConfig {
+    const defaults = EVENT_REACTION_DEFAULTS[reactionId];
+    const overrides = config.get<EventReactionOverrides>('eventReactions', {});
+    const override = overrides[reactionId] ?? {};
+    const settingPrefix = `eventReactions.${reactionId}`;
+
+    return {
+        enabled: getConfiguredSetting<boolean>(config, `${settingPrefix}.enabled`)
+            ?? (typeof override.enabled === 'boolean' ? override.enabled : defaults.enabled),
+        emoteId: getConfiguredSetting<string>(config, `${settingPrefix}.emoteId`)
+            ?? (typeof override.emoteId === 'string' && override.emoteId.length > 0
+                ? override.emoteId
+                : defaults.emoteId),
+        target: getConfiguredSetting<EmoteTarget>(config, `${settingPrefix}.target`)
+            ?? (override.target === 'all' || override.target === 'random'
+                ? override.target
+                : defaults.target),
+        bounce: getConfiguredSetting<boolean>(config, `${settingPrefix}.bounce`)
+            ?? (typeof override.bounce === 'boolean' ? override.bounce : defaults.bounce)
+    };
+}
+
+function getConfiguredSetting<T>(config: vscode.WorkspaceConfiguration, key: string): T | undefined {
+    const inspected = config.inspect<T>(key);
+    return inspected?.workspaceFolderValue
+        ?? inspected?.workspaceValue
+        ?? inspected?.globalValue
+        ?? inspected?.workspaceFolderLanguageValue
+        ?? inspected?.workspaceLanguageValue
+        ?? inspected?.globalLanguageValue;
 }
 
 const PET_NAME_PREFIXES = ['Sir', 'Lady', 'Captain', 'Dr.', 'Professor', 'Agent'];

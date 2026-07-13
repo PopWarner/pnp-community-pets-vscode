@@ -1,0 +1,6 @@
+{
+  "$schema": "../../emote.schema.json",
+  "name": "Trash",
+  "description": "Deleted file or cleanup",
+  "imageFile": "trash.png"
+}

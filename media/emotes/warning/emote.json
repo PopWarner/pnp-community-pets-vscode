@@ -1,0 +1,6 @@
+{
+  "$schema": "../../emote.schema.json",
+  "name": "Warning",
+  "description": "Warnings or problems detected",
+  "imageFile": "warning.png"
+}

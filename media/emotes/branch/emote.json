@@ -1,0 +1,6 @@
+{
+  "$schema": "../../emote.schema.json",
+  "name": "Branch",
+  "description": "Git branch activity",
+  "imageFile": "branch.png"
+}

@@ -22,7 +22,7 @@
     },
     "imageFile": {
       "type": "string",
-      "description": "Filename of the emote image (PNG, SVG, or GIF; transparent background recommended), relative to this folder."
+      "description": "Filename of the emote image (PNG, WebP, SVG, GIF, or animated WebP/GIF; transparent background recommended), relative to this folder."
     }
   }
 }

@@ -2,5 +2,5 @@
   "$schema": "../../emote.schema.json",
   "name": "Heart",
   "description": "Friendly / likes this",
-  "imageFile": "heart.svg"
+  "imageFile": "heart.png"
 }

@@ -1,0 +1,15 @@
+{
+  "$schema": "../../mascot.schema.json",
+  "id": "bit",
+  "name": "Bit",
+  "description": "Bit, the Power Platform mascot. Pick your own shirt color!",
+  "type": "png-sheet",
+  "src": "bit-sprite-chroma.png",
+  "framesPerRow": 4,
+  "frameWidth": 64,
+  "frameHeight": 85,
+  "tintable": true,
+  "chromaColor": "#FF00FF",
+  "defaultTintColor": "#742774",
+  "tags": ["power-platform", "community", "tintable"]
+}

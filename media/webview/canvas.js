@@ -384,6 +384,8 @@
             // personal click emote above, so the two never overwrite each other.
             this._interactionEmoteRenderer = null;
             this.interactionEmoteUntil = 0;
+            this._eventEmoteRenderer = null;
+            this.eventEmoteUntil = 0;
             this._greetedNeighbor = false;
             const sprite = definition.sprite;
             if (sprite.type === 'png-sheet') {
@@ -433,6 +435,13 @@
             this.petState = PetState.IDLE;
             this.idleElapsed = 0;
             this.idleDuration = EMOTE_DURATION;
+        }
+
+        /** Shows an event-triggered emote from the extension host. This is
+         *  independent of the pet's personal click emote choice. */
+        showEventEmote(now, renderer) {
+            this._eventEmoteRenderer = renderer;
+            this.eventEmoteUntil = now + EMOTE_DURATION;
         }
 
         // Converts a canvas point into this mascot's local, pre-rotation
@@ -615,15 +624,19 @@
                 _drawName(this.name, x + this.renderer.frameWidth / 2, y - 6);
             }
 
-            // Precedence for the above-head slot: interaction emote > click
-            // emote > sign. Each one resumes automatically once whichever is
-            // ahead of it expires — no explicit "restore" logic needed.
+            // Precedence for the above-head slot: pet interaction > VS Code
+            // event > click emote > sign. Each one resumes automatically once
+            // whichever is ahead of it expires — no explicit restore needed.
             const fw = this.renderer.frameWidth;
             const fh = this.renderer.frameHeight;
 
             if (this._interactionEmoteRenderer && now < this.interactionEmoteUntil) {
                 _drawRotated(x, y, fw, fh, rotation, () => {
                     this._interactionEmoteRenderer.draw(fh);
+                });
+            } else if (this._eventEmoteRenderer && now < this.eventEmoteUntil) {
+                _drawRotated(x, y, fw, fh, rotation, () => {
+                    this._eventEmoteRenderer.draw(fh);
                 });
             } else if (this.emoteRenderer && now < this.emoteUntil) {
                 _drawRotated(x, y, fw, fh, rotation, () => {
@@ -682,6 +695,7 @@
     // -------------------------------------------------------------------------
 
     let _interactionEmoteRenderer = null;
+    const _eventEmoteRenderers = new Map();
 
     function _getInteractionEmoteRenderer() {
         if (!INTERACTION_EMOTE_URI) { return null; }
@@ -689,6 +703,37 @@
             _interactionEmoteRenderer = new EmoteRenderer(INTERACTION_EMOTE_URI);
         }
         return _interactionEmoteRenderer;
+    }
+
+    function _getEventEmoteRenderer(imageUri) {
+        if (!imageUri) { return null; }
+        if (!_eventEmoteRenderers.has(imageUri)) {
+            _eventEmoteRenderers.set(imageUri, new EmoteRenderer(imageUri));
+        }
+        return _eventEmoteRenderers.get(imageUri);
+    }
+
+    function _eventTargets(target, id) {
+        if (id) {
+            const found = mascots.find(m => m.id === id);
+            return found ? [found] : [];
+        }
+        if (target === 'all') { return mascots; }
+        if (mascots.length === 0) { return []; }
+        return [mascots[Math.floor(Math.random() * mascots.length)]];
+    }
+
+    function _showEventEmote(eventData) {
+        const renderer = _getEventEmoteRenderer(eventData.emote);
+        if (!renderer) { return; }
+
+        const now = performance.now();
+        for (const m of _eventTargets(eventData.target, eventData.id)) {
+            m.showEventEmote(now, renderer);
+            if (eventData.bounce !== false) {
+                m.react(now);
+            }
+        }
     }
 
     function _checkPetInteractions(now) {
@@ -816,6 +861,9 @@
                 }
                 break;
             }
+            case 'showEmote':
+                _showEventEmote(event.data);
+                break;
             case 'updateBadges':
                 renderBadges(event.data.badges ?? [], event.data.profileUrl ?? '');
                 break;

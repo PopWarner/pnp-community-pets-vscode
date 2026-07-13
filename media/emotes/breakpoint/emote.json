@@ -1,0 +1,6 @@
+{
+  "$schema": "../../emote.schema.json",
+  "name": "Breakpoint",
+  "description": "Breakpoint changed",
+  "imageFile": "breakpoint.png"
+}

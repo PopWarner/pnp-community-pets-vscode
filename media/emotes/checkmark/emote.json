@@ -2,5 +2,5 @@
   "$schema": "../../emote.schema.json",
   "name": "Checkmark",
   "description": "Success / approval",
-  "imageFile": "checkmark.svg"
+  "imageFile": "checkmark.png"
 }

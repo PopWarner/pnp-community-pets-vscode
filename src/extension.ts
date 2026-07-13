@@ -34,6 +34,10 @@ export async function activate(context: vscode.ExtensionContext) {
             provider.adjustPetSpeedInteractive();
         }),
 
+        vscode.commands.registerCommand('pnpPets.testEventReaction', () => {
+            provider.showEventReaction('fileSaved');
+        }),
+
         vscode.commands.registerCommand('pnpPets.showBadges', async () => {
             const config = vscode.workspace.getConfiguration('pnpPets');
             let username = config.get<string>('credlyUsername', '');
@@ -53,6 +57,26 @@ export async function activate(context: vscode.ExtensionContext) {
             if (e.affectsConfiguration('pnpPets')) {
                 provider.onConfigChanged();
             }
+        }),
+
+        vscode.workspace.onDidSaveTextDocument(() => {
+            provider.showEventReaction('fileSaved');
+        }),
+
+        vscode.tasks.onDidEndTaskProcess(e => {
+            provider.showEventReaction(e.exitCode === 0 ? 'taskSucceeded' : 'taskFailed');
+        }),
+
+        vscode.window.onDidOpenTerminal(() => {
+            provider.showEventReaction('terminalOpened');
+        }),
+
+        vscode.debug.onDidStartDebugSession(() => {
+            provider.showEventReaction('debugStarted');
+        }),
+
+        vscode.debug.onDidTerminateDebugSession(() => {
+            provider.showEventReaction('debugStopped');
         })
     );
 }
