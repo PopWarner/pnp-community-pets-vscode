@@ -14,6 +14,7 @@ Thanks for wanting to contribute! This project is built by and for the M365 and 
 | New feature | Open a GitHub Discussion first so we can align before you build |
 | Docs improvement | Submit a PR directly, no issue needed |
 | Badge/logo (held up as a sign) | No code required. See [Adding a Badge or Logo](#adding-a-badge-or-logo) below |
+| Emote | No code required. See [Adding an Emote](#adding-an-emote) below |
 
 ---
 
@@ -71,6 +72,8 @@ Walking left is generated automatically by mirroring row 1, so you don't need to
 
 **Start here:** [templates/README.md](templates/README.md) has a grid template, a working reference sprite sheet, and an AI prompt template: everything you need to build your first sprite sheet from scratch. Draw your mascot directly on the template and export with the guide lines still in the image; no layer cleanup required. Just keep your character a few pixels clear of each gridline, and set `"framePadding": 3` in your manifest (see below) so the extension crops those lines back out automatically.
 
+<SCREENSHOT HERE - 4x2 mascot sprite sheet example showing idle row and walk-right row>
+
 ```json
 {
   "$schema": "../../mascot.schema.json",
@@ -122,7 +125,9 @@ Users can pick a custom color for any area of your mascot you mark as tintable, 
 - `chromaColor`: the color you painted (defaults to `#FF00FF` if omitted)
 - `defaultTintColor`: fallback color used when the mascot spawns automatically on startup (no user prompt happens then), so it's never seen with the raw chroma color unless someone deliberately picks "no tint" from the spawn picker
 
-**Real example:** [media/pets/parker-chroma/](media/pets/parker-chroma/) is a working tintable mascot.
+**Real examples:** [media/pets/parker-chroma/](media/pets/parker-chroma/) and [media/pets/bit-chroma/](media/pets/bit-chroma/) are working tintable mascots.
+
+<SCREENSHOT HERE - Tintable mascot source art showing pure #FF00FF shirt before tinting and the same mascot after user color tinting>
 
 ---
 
@@ -184,6 +189,41 @@ Reference [badge.schema.json](badge.schema.json) at the repo root from your `bad
 - `id` is optional too, defaults to the folder name if omitted
 
 **Real example:** [media/badges/sharepoint-skills/](media/badges/sharepoint-skills/) is a working badge.
+
+<SCREENSHOT HERE - Badge/logo picker and a pet holding the selected badge as a sign>
+
+---
+
+## Adding an Emote
+
+Emotes are temporary images shown above pets. They are used for click reactions, pet-to-pet interactions, and VS Code event reactions such as file saves, terminal opens, task results, and debug start/stop.
+
+Emotes are also no-code. Each emote lives in its own folder under `media/emotes/<your-emote>/` with an `emote.json` manifest.
+
+```text
+media/emotes/my-emote/
+|-- emote.json
+`-- my-emote.png
+```
+
+Reference [emote.schema.json](emote.schema.json) at the repo root from your `emote.json`'s `$schema` field for autocomplete.
+
+```json
+{
+  "$schema": "../../emote.schema.json",
+  "name": "My Emote",
+  "description": "Short description shown in the emote picker",
+  "imageFile": "my-emote.png"
+}
+```
+
+PNG is the recommended format for bundled emotes. Transparent PNGs at 256x256 px work well: they have enough source detail for crisp display while staying easy to review and package. The renderer can load other web image formats, but the built-in library currently uses PNGs for consistency.
+
+Event reactions use emote folder IDs, so choose stable lowercase folder names like `party-popper`, `terminal`, or `ship-it`. If an event setting points to an unknown emote ID, the extension falls back to its built-in default for that event.
+
+<SCREENSHOT HERE - Contact sheet of bundled PNG emotes showing the expected transparent 256x256 style>
+
+<SCREENSHOT HERE - Emote picker or event reaction settings dropdown showing emote IDs/names>
 
 ---
 

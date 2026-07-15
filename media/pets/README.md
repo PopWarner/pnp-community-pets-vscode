@@ -24,11 +24,15 @@ media/pets/
 |---|---|---|---|
 | `parker/` | Parker the Porcupine | SVG | [pnp/media](https://github.com/pnp/media/tree/master/parker) |
 
+<SCREENSHOT HERE - Current mascot gallery showing Parker and Bit in the pet panel>
+
 ---
 
 ## PNG sprite sheet format
 
 All frames in one PNG, laid out in a grid:
+
+<SCREENSHOT HERE - PNG sprite sheet grid showing 4 idle frames and 4 walk-right frames>
 
 ```text
 +----------+----------+----------+----------+
@@ -61,6 +65,8 @@ Flat colors, clean outlines, no background fill.
 
 One static SVG file per animation frame. The canvas cycles through them like a flipbook.
 
+<SCREENSHOT HERE - Example SVG-frame mascot folder and rendered static mascot preview>
+
 - No background fill
 - Any viewBox: the canvas scales to `frameWidth × frameHeight` automatically
 - `walkLeft` frames are optional; set `walkLeft: []` in the registry and the renderer auto-mirrors `walkRight`
@@ -87,6 +93,8 @@ your-mascot/
 ## GIF format
 
 One animated GIF per animation state. The browser handles frame timing internally, so no frame math is required.
+
+<SCREENSHOT HERE - Example GIF mascot folder and rendered animated mascot preview>
 
 ```text
 your-mascot/

@@ -4,25 +4,41 @@ Parker the Porcupine, Bit, and more Copilot, Microsoft 365 & Power Platform masc
 
 ![Parker walking in the Explorer sidebar](docs/screenshots/hero.png)
 
+<SCREENSHOT HERE - Wide Explorer sidebar hero showing Parker and Bit walking in the PnP Community Pets panel>
+
 ## Features
 
-- **Real community mascots**: starting with Parker the Porcupine, the official PnP mascot
+- **Real community mascots**: Parker the Porcupine and Bit, with room for more community mascots
 - **Pick your own color**: tintable mascots let you choose a shirt color from a preset palette or any custom hex value
 - **Walks every surface**: floor, walls, and ceiling
 - **Multiple pets at once**: spawn as many as you like, each with its own name and color
 - **Remembers your pets**: they're restored automatically the next time you open VS Code
 - **Individually manage each pet**: remove or speed up/slow down one specific pet without touching the rest, from the Command Palette
 - **Click a pet to say hi**: gives a little bounce; on walls and ceiling it hops away from the surface, matching its rotation
+- **Event reaction emotes**: pets can react when files are saved, terminals open, tasks finish, or debugging starts and stops
+- **Pet-to-pet interactions**: pets that meet on the floor can pause, bounce, and share an emote together
 - **Hold up a badge or logo**: attach a badge from the community badge library to any pet at spawn time. Click the badge to open its link
 - **Credly badge strip**: show off your earned community badges right in the panel
 - **Seasonal themes**: background themes for holidays and community events
-- **No-code contribution model**: add a new mascot, badge, or logo with a JSON file and some art, no code required
+- **No-code contribution model**: add a new mascot, badge, logo, or emote with a JSON file and some art, no code required
 
 ## Screenshots
 
 | Spawn a pet | Pick a color | Badge strip |
 |---|---|---|
 | ![Spawn picker](docs/screenshots/spawn-picker.png) | ![Color picker](docs/screenshots/color-picker.png) | ![Badge strip](docs/screenshots/badge-strip.png) |
+
+<SCREENSHOT HERE - Spawn picker showing Parker and Bit as selectable mascots>
+
+<SCREENSHOT HERE - Tint color picker for a tintable mascot>
+
+<SCREENSHOT HERE - Pet panel with Credly badge strip visible>
+
+<SCREENSHOT HERE - Pet holding a badge/sign in the panel>
+
+<SCREENSHOT HERE - Pet showing a click emote above its head>
+
+<SCREENSHOT HERE - Event reaction emote appearing after a file save or test event reaction command>
 
 ## Getting Started
 
@@ -43,10 +59,33 @@ Parker the Porcupine, Bit, and more Copilot, Microsoft 365 & Power Platform masc
 | `pnpPets.persistPets` | `true` | Remember active pets across VS Code restarts |
 | `pnpPets.credlyUsername` | `""` | Your Credly username, to show your badges in the panel |
 | `pnpPets.showBadgeStrip` | `true` | Show the Credly badge strip |
+| `pnpPets.enableEventReactions` | `true` | Enable temporary event emotes for VS Code activity |
 
-## Contributing a Mascot or Badge
+### Event Reaction Settings
 
-Adding a new mascot, badge, or logo is a no-code contribution: drop a folder with a JSON manifest and your art under `media/pets/` or `media/badges/`. See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide, supported sprite formats, and an AI-art prompt template to help you generate one.
+Each supported event has its own settings group under `pnpPets.eventReactions.<event>`.
+
+Supported events:
+
+- `fileSaved`
+- `taskSucceeded`
+- `taskFailed`
+- `terminalOpened`
+- `debugStarted`
+- `debugStopped`
+
+Each event supports:
+
+- `enabled`: turn that event reaction on or off
+- `emoteId`: choose one of the bundled emotes
+- `target`: `random` for one active pet, or `all` for every active pet
+- `bounce`: whether the pet bounces when the event emote appears
+
+<SCREENSHOT HERE - VS Code Settings UI showing per-event reaction controls with enabled checkbox, emote dropdown, target dropdown, and bounce checkbox>
+
+## Contributing Assets
+
+Adding a new mascot, badge, logo, or emote is a no-code contribution: drop a folder with a JSON manifest and your art under `media/pets/`, `media/badges/`, or `media/emotes/`. See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide, supported sprite formats, and asset templates.
 
 ## Roadmap
 

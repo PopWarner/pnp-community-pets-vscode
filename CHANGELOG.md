@@ -8,13 +8,19 @@ All notable changes to the "PnP Community Pets" extension will be documented in 
 
 - Initial preview release
 - Animated Parker the Porcupine mascot with a tintable, user-colorable shirt
+- Bit, the Power Platform mascot, as a tintable PNG sprite-sheet mascot
 - Walking, idle, and full surface traversal (floor, walls, ceiling)
 - No-code mascot contribution model via `mascot.json` manifests
 - PNG sprite sheet, SVG frame, and animated GIF sprite format support
 - Spawn / remove / name / color picker via the panel's `+` and trash icons
 - Pets persist across VS Code restarts (`pnpPets.persistPets`)
+- Per-pet management commands for targeted removal and live speed adjustment
+- Pet-to-pet proximity interactions with shared emotes
 - Seasonal background themes with automatic date-based selection
 - Credly badge strip integration
+- No-code emote library (`media/emotes/<id>/emote.json`) with bundled PNG emotes
+- Event reaction emotes for file saves, terminal opens, task success/failure, and debug start/stop
+- Per-event reaction settings for enabled state, emote choice, random/all targeting, and bounce behavior
 - `hidden` mascot manifest field, for staging a mascot before it's shown in the spawn picker
 - `framePadding` mascot manifest field: lets contributors leave sprite-sheet grid guide lines baked into their art, automatically cropped out at render time
 - No-code contribution templates (`templates/`): a grid guide image, a working reference sprite sheet, and an AI prompt template
