@@ -1,6 +1,8 @@
 # Screenshots
 
-Drop PNGs here with these exact filenames. The root `README.md` already links to them:
+Drop PNGs here with these exact filenames. `README.md` and `CONTRIBUTING.md` already link to them.
+
+Every spot that still needs a shot is marked with an HTML comment, invisible when rendered. Search the repo for `SCREENSHOT NEEDED` to find every remaining placeholder; once you drop in the real PNG, the `![...]` line right below the comment will render it automatically. Delete the comment once the shot is in, or leave it — it's inert either way.
 
 | Filename | What to capture |
 |---|---|

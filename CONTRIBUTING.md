@@ -72,7 +72,8 @@ Walking left is generated automatically by mirroring row 1, so you don't need to
 
 **Start here:** [templates/README.md](templates/README.md) has a grid template, a working reference sprite sheet, and an AI prompt template: everything you need to build your first sprite sheet from scratch. Draw your mascot directly on the template and export with the guide lines still in the image; no layer cleanup required. Just keep your character a few pixels clear of each gridline, and set `"framePadding": 3` in your manifest (see below) so the extension crops those lines back out automatically.
 
-<SCREENSHOT HERE - 4x2 mascot sprite sheet example showing idle row and walk-right row>
+<!-- SCREENSHOT NEEDED: docs/screenshots/sprite-sheet-example.png - 4x2 mascot sprite sheet example showing idle row and walk-right row -->
+![Sprite sheet example](docs/screenshots/sprite-sheet-example.png)
 
 ```json
 {
@@ -127,7 +128,8 @@ Users can pick a custom color for any area of your mascot you mark as tintable, 
 
 **Real examples:** [media/pets/parker-chroma/](media/pets/parker-chroma/) and [media/pets/bit-chroma/](media/pets/bit-chroma/) are working tintable mascots.
 
-<SCREENSHOT HERE - Tintable mascot source art showing pure #FF00FF shirt before tinting and the same mascot after user color tinting>
+<!-- SCREENSHOT NEEDED: docs/screenshots/tint-before-after.png - Tintable mascot source art showing pure #FF00FF shirt before tinting and the same mascot after user color tinting -->
+![Tint before and after](docs/screenshots/tint-before-after.png)
 
 ---
 
@@ -193,9 +195,10 @@ PNG is the recommended format for bundled emotes. Transparent PNGs at 256x256 px
 
 Event reactions use emote folder IDs, so choose stable lowercase folder names like `party-popper`, `terminal`, or `ship-it`. If an event setting points to an unknown emote ID, the extension falls back to its built-in default for that event.
 
-<SCREENSHOT HERE - Contact sheet of bundled PNG emotes showing the expected transparent 256x256 style>
+<!-- SCREENSHOT NEEDED: docs/screenshots/emote-contact-sheet.png - Contact sheet of bundled PNG emotes showing the expected transparent 256x256 style -->
+![Emote contact sheet](docs/screenshots/emote-contact-sheet.png)
 
-<SCREENSHOT HERE - Emote picker or event reaction settings dropdown showing emote IDs/names>
+Event reaction settings, including the emote picker dropdown, are shown in the [README](README.md#event-reaction-settings).
 
 ---
 

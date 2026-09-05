@@ -2,9 +2,8 @@
 
 Parker the Porcupine, Bit, and more Copilot, Microsoft 365 & Power Platform mascots living in your VS Code Explorer sidebar. They walk, climb, and idle around the panel, and react when you save a file, run a task, or start debugging.
 
+<!-- SCREENSHOT NEEDED: docs/screenshots/hero.png - Wide Explorer sidebar hero showing Parker and Bit walking in the PnP Community Pets panel -->
 ![Parker walking in the Explorer sidebar](docs/screenshots/hero.png)
-
-<SCREENSHOT HERE - Wide Explorer sidebar hero showing Parker and Bit walking in the PnP Community Pets panel>
 
 ## Features
 
@@ -22,17 +21,14 @@ Parker the Porcupine, Bit, and more Copilot, Microsoft 365 & Power Platform masc
 
 ## Screenshots
 
-| Spawn a pet | Pick a color | Event reactions |
-|---|---|---|
-| ![Spawn picker](docs/screenshots/spawn-picker.png) | ![Color picker](docs/screenshots/color-picker.png) | ![Event reaction](docs/screenshots/event-reaction.png) |
+<!-- SCREENSHOT NEEDED: docs/screenshots/spawn-picker.png - Spawn picker showing Parker and Bit as selectable mascots -->
+<!-- SCREENSHOT NEEDED: docs/screenshots/color-picker.png - Tint color picker for a tintable mascot -->
+<!-- SCREENSHOT NEEDED: docs/screenshots/click-emote.png - Pet showing a click emote above its head -->
+<!-- SCREENSHOT NEEDED: docs/screenshots/event-reaction.png - Event reaction emote appearing after a file save -->
 
-<SCREENSHOT HERE - Spawn picker showing Parker and Bit as selectable mascots>
-
-<SCREENSHOT HERE - Tint color picker for a tintable mascot>
-
-<SCREENSHOT HERE - Pet showing a click emote above its head>
-
-<SCREENSHOT HERE - Event reaction emote appearing after a file save>
+| Spawn a pet | Pick a color | Click emote | Event reaction |
+|---|---|---|---|
+| ![Spawn picker](docs/screenshots/spawn-picker.png) | ![Color picker](docs/screenshots/color-picker.png) | ![Click emote](docs/screenshots/click-emote.png) | ![Event reaction](docs/screenshots/event-reaction.png) |
 
 ## Getting Started
 
@@ -73,7 +69,8 @@ Each event supports:
 - `target`: `random` for one active pet, or `all` for every active pet
 - `bounce`: whether the pet bounces when the event emote appears
 
-<SCREENSHOT HERE - VS Code Settings UI showing per-event reaction controls with enabled checkbox, emote dropdown, target dropdown, and bounce checkbox>
+<!-- SCREENSHOT NEEDED: docs/screenshots/event-reaction-settings.png - VS Code Settings UI showing per-event reaction controls with enabled checkbox, emote dropdown, target dropdown, and bounce checkbox -->
+![Event reaction settings](docs/screenshots/event-reaction-settings.png)
 
 ## Contributing Assets
 
