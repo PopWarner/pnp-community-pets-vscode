@@ -48,6 +48,8 @@ const EVENT_REACTION_DEFAULTS: Record<EventReactionId, EventReactionConfig> = {
     debugStopped:   { enabled: true, emoteId: 'stop',      target: 'random', bounce: false }
 } as const;
 
+const BADGE_FEATURES_ENABLED = false;
+
 export class PetViewProvider implements vscode.WebviewViewProvider {
     public static readonly viewType = 'pnpPets.petView';
 
@@ -125,7 +127,7 @@ export class PetViewProvider implements vscode.WebviewViewProvider {
         }
 
         let signBadgeId: string | undefined;
-        if (BadgeRegistry.getAll().length > 0) {
+        if (BADGE_FEATURES_ENABLED && BadgeRegistry.getAll().length > 0) {
             const result = await _pickSign();
             if (result === undefined) { return; }    // user pressed Escape — cancel spawn
             signBadgeId = result ?? undefined;       // null (no sign) → leave signBadgeId unset
@@ -232,7 +234,7 @@ export class PetViewProvider implements vscode.WebviewViewProvider {
     }
 
     public async refreshBadges(username: string) {
-        if (!this._view) { return; }
+        if (!BADGE_FEATURES_ENABLED || !this._view) { return; }
         const badges = await CredlyService.fetchBadges(username);
         const profileUrl = CredlyService.getProfileUrl(username);
         this._view.webview.postMessage({ command: 'updateBadges', badges, profileUrl });
@@ -298,10 +300,6 @@ export class PetViewProvider implements vscode.WebviewViewProvider {
                     this.spawnPets();
                 }
 
-                const username = config.get<string>('credlyUsername', '');
-                if (username && config.get<boolean>('showBadgeStrip', true)) {
-                    await this.refreshBadges(username);
-                }
                 break;
             }
             case 'requestSpawn':
@@ -356,6 +354,7 @@ export class PetViewProvider implements vscode.WebviewViewProvider {
     }
 
     private _resolveSign(signBadgeId?: string): ResolvedSign | undefined {
+        if (!BADGE_FEATURES_ENABLED) { return undefined; }
         if (!signBadgeId) { return undefined; }
         const badge = BadgeRegistry.get(signBadgeId);
         if (!badge) { return undefined; } // badge was removed — skip it

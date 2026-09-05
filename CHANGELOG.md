@@ -17,16 +17,13 @@ All notable changes to the "PnP Community Pets" extension will be documented in 
 - Per-pet management commands for targeted removal and live speed adjustment
 - Pet-to-pet proximity interactions with shared emotes
 - Seasonal background themes with automatic date-based selection
-- Credly badge strip integration
 - No-code emote library (`media/emotes/<id>/emote.json`) with bundled PNG emotes
 - Event reaction emotes for file saves, terminal opens, task success/failure, and debug start/stop
 - Per-event reaction settings for enabled state, emote choice, random/all targeting, and bounce behavior
 - `hidden` mascot manifest field, for staging a mascot before it's shown in the spawn picker
 - `framePadding` mascot manifest field: lets contributors leave sprite-sheet grid guide lines baked into their art, automatically cropped out at render time
 - No-code contribution templates (`templates/`): a grid guide image, a working reference sprite sheet, and an AI prompt template
-- No-code badge/logo library (`media/badges/<id>/badge.json`), auto-discovered the same way mascots are
-- Pets can hold up a badge or logo on a speech-bubble sign, chosen at spawn time, rotates with the pet on walls and ceiling
-- Clicking a pet triggers a small reaction bounce; clicking its sign opens the badge's link (if set) in the browser
+- Clicking a pet triggers a small reaction bounce
 - `PnP Pets: Remove a Pet` command: remove one specific pet without affecting the others
 - `PnP Pets: Adjust Pet Speed` command: speed up or slow down one specific pet live, no respawn needed
 - Marketplace packaging: extension icon, `preview` flag, corrected repository links

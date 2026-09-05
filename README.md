@@ -17,36 +17,30 @@ Parker the Porcupine, Bit, and more Copilot, Microsoft 365 & Power Platform masc
 - **Click a pet to say hi**: gives a little bounce; on walls and ceiling it hops away from the surface, matching its rotation
 - **Event reaction emotes**: pets can react when files are saved, terminals open, tasks finish, or debugging starts and stops
 - **Pet-to-pet interactions**: pets that meet on the floor can pause, bounce, and share an emote together
-- **Hold up a badge or logo**: attach a badge from the community badge library to any pet at spawn time. Click the badge to open its link
-- **Credly badge strip**: show off your earned community badges right in the panel
 - **Seasonal themes**: background themes for holidays and community events
-- **No-code contribution model**: add a new mascot, badge, logo, or emote with a JSON file and some art, no code required
+- **No-code contribution model**: add a new mascot or emote with a JSON file and some art, no code required
 
 ## Screenshots
 
-| Spawn a pet | Pick a color | Badge strip |
+| Spawn a pet | Pick a color | Event reactions |
 |---|---|---|
-| ![Spawn picker](docs/screenshots/spawn-picker.png) | ![Color picker](docs/screenshots/color-picker.png) | ![Badge strip](docs/screenshots/badge-strip.png) |
+| ![Spawn picker](docs/screenshots/spawn-picker.png) | ![Color picker](docs/screenshots/color-picker.png) | ![Event reaction](docs/screenshots/event-reaction.png) |
 
 <SCREENSHOT HERE - Spawn picker showing Parker and Bit as selectable mascots>
 
 <SCREENSHOT HERE - Tint color picker for a tintable mascot>
 
-<SCREENSHOT HERE - Pet panel with Credly badge strip visible>
-
-<SCREENSHOT HERE - Pet holding a badge/sign in the panel>
-
 <SCREENSHOT HERE - Pet showing a click emote above its head>
 
-<SCREENSHOT HERE - Event reaction emote appearing after a file save or test event reaction command>
+<SCREENSHOT HERE - Event reaction emote appearing after a file save>
 
 ## Getting Started
 
 1. Install the extension
 2. Open the Explorer sidebar. The **PnP Community Pets** panel appears at the bottom
-3. Click the `+` icon to spawn a pet, give it a name, and (for tintable mascots) pick a color and a badge/sign
+3. Click the `+` icon to spawn a pet, give it a name, and (for tintable mascots) pick a color
 4. Click the trash icon to remove all pets
-5. Open the Command Palette (`Ctrl+Shift+P`) for more: **Remove a Pet**, **Adjust Pet Speed**, or **Show My Credly Badges**
+5. Open the Command Palette (`Ctrl+Shift+P`) for more: **Remove a Pet** or **Adjust Pet Speed**
 
 ## Settings
 
@@ -57,8 +51,6 @@ Parker the Porcupine, Bit, and more Copilot, Microsoft 365 & Power Platform masc
 | `pnpPets.speed` | `2` | Movement speed (1–10) |
 | `pnpPets.petCount` | `1` | Number of pets spawned automatically on startup |
 | `pnpPets.persistPets` | `true` | Remember active pets across VS Code restarts |
-| `pnpPets.credlyUsername` | `""` | Your Credly username, to show your badges in the panel |
-| `pnpPets.showBadgeStrip` | `true` | Show the Credly badge strip |
 | `pnpPets.enableEventReactions` | `true` | Enable temporary event emotes for VS Code activity |
 
 ### Event Reaction Settings
@@ -85,7 +77,9 @@ Each event supports:
 
 ## Contributing Assets
 
-Adding a new mascot, badge, logo, or emote is a no-code contribution: drop a folder with a JSON manifest and your art under `media/pets/`, `media/badges/`, or `media/emotes/`. See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide, supported sprite formats, and asset templates.
+Adding a new mascot or emote is a no-code contribution: drop a folder with a JSON manifest and your art under `media/pets/` or `media/emotes/`. See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide, supported sprite formats, and asset templates.
+
+Badge signs and Credly profile integrations are planned for a future release.
 
 ## Roadmap
 

@@ -45,12 +45,6 @@
                 "icon": "$(trash)"
             },
             {
-                "command": "pnpPets.showBadges",
-                "title": "Show My Credly Badges",
-                "category": "PnP Pets",
-                "icon": "$(account)"
-            },
-            {
                 "command": "pnpPets.removePet",
                 "title": "Remove a Pet",
                 "category": "PnP Pets"
@@ -58,11 +52,6 @@
             {
                 "command": "pnpPets.adjustPetSpeed",
                 "title": "Adjust Pet Speed",
-                "category": "PnP Pets"
-            },
-            {
-                "command": "pnpPets.testEventReaction",
-                "title": "Test Event Reaction",
                 "category": "PnP Pets"
             }
         ],
@@ -77,12 +66,6 @@
                     "command": "pnpPets.removeAllPets",
                     "when": "view == pnpPets.petView",
                     "group": "navigation"
-                }
-            ],
-            "commandPalette": [
-                {
-                    "command": "pnpPets.showBadges",
-                    "when": "false"
                 }
             ]
         },
@@ -127,16 +110,6 @@
                     "type": "boolean",
                     "default": true,
                     "description": "Remember which pets are on screen and restore them when VS Code reopens"
-                },
-                "pnpPets.credlyUsername": {
-                    "type": "string",
-                    "default": "",
-                    "description": "Your Credly username to display your community badges in the pet panel"
-                },
-                "pnpPets.showBadgeStrip": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Show your Credly badges in a strip at the bottom of the pet panel"
                 },
                 "pnpPets.enableEventReactions": {
                     "type": "boolean",

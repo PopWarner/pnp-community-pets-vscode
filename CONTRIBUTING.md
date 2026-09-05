@@ -13,7 +13,7 @@ Thanks for wanting to contribute! This project is built by and for the M365 and 
 | Bug fix | Open an issue, then submit a PR |
 | New feature | Open a GitHub Discussion first so we can align before you build |
 | Docs improvement | Submit a PR directly, no issue needed |
-| Badge/logo (held up as a sign) | No code required. See [Adding a Badge or Logo](#adding-a-badge-or-logo) below |
+| Badge/logo integration | Coming soon. Open a GitHub Discussion if you want to help shape it |
 | Emote | No code required. See [Adding an Emote](#adding-an-emote) below |
 
 ---
@@ -142,7 +142,7 @@ Users can pick a custom color for any area of your mascot you mark as tintable, 
 ```
 
 - `hidden`: excludes the mascot from the spawn picker while still allowing direct selection via the `pnpPets.mascot` setting. Useful for staging a mascot before it's ready to show off.
-- `unlockedByBadgeId`: only shows this mascot in the picker once the user has earned the matching Credly badge.
+- `unlockedByBadgeId`: reserved for a future badge/Credly integration.
 
 ---
 
@@ -160,37 +160,9 @@ Drop your folder under `media/pets/`, run `npm run compile` to confirm nothing b
 
 ---
 
-## Adding a Badge or Logo
+## Badge and Credly Integrations
 
-Badges are a separate library from mascots, a conference logo or Credly badge doesn't need a pet, and a mascot doesn't need a badge. Any pet can hold up any badge as a sign at spawn time.
-
-Each badge lives in its own folder under `media/badges/<your-badge>/` with a `badge.json` manifest, auto-discovered the same way mascots are, no code, no registration step.
-
-```text
-media/badges/my-badge/
-├── badge.json
-└── logo.png
-```
-
-Reference [badge.schema.json](badge.schema.json) at the repo root from your `badge.json`'s `$schema` field for autocomplete.
-
-```json
-{
-  "$schema": "../../badge.schema.json",
-  "name": "My Badge",
-  "description": "Short description shown in the badge picker",
-  "imageFile": "logo.png",
-  "linkUrl": "https://example.com/my-badge"
-}
-```
-
-- `imageFile` is the only required field: a square, transparent PNG, roughly 48–64px, works well since it's displayed small on the sign
-- `linkUrl` is optional. If set, clicking the sign in the panel opens it in the browser
-- `id` is optional too, defaults to the folder name if omitted
-
-**Real example:** [media/badges/sharepoint-skills/](media/badges/sharepoint-skills/) is a working badge.
-
-<SCREENSHOT HERE - Badge/logo picker and a pet holding the selected badge as a sign>
+Badge signs, community logos, and Credly profile integrations are planned for a future release. Open a GitHub Discussion if you want to help shape the contribution model before those features are enabled publicly.
 
 ---
 

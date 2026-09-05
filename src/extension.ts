@@ -1,12 +1,10 @@
 import * as vscode from 'vscode';
 import { PetViewProvider } from './PetViewProvider';
 import { MascotRegistry } from './mascots/MascotRegistry';
-import { BadgeRegistry } from './mascots/BadgeRegistry';
 import { EmoteRegistry } from './mascots/EmoteRegistry';
 
 export async function activate(context: vscode.ExtensionContext) {
     await MascotRegistry.init(context.extensionUri);
-    await BadgeRegistry.init(context.extensionUri);
     await EmoteRegistry.init(context.extensionUri);
 
     const provider = new PetViewProvider(context);
@@ -32,25 +30,6 @@ export async function activate(context: vscode.ExtensionContext) {
 
         vscode.commands.registerCommand('pnpPets.adjustPetSpeed', () => {
             provider.adjustPetSpeedInteractive();
-        }),
-
-        vscode.commands.registerCommand('pnpPets.testEventReaction', () => {
-            provider.showEventReaction('fileSaved');
-        }),
-
-        vscode.commands.registerCommand('pnpPets.showBadges', async () => {
-            const config = vscode.workspace.getConfiguration('pnpPets');
-            let username = config.get<string>('credlyUsername', '');
-            if (!username) {
-                const entered = await vscode.window.showInputBox({
-                    prompt: 'Enter your Credly username',
-                    placeHolder: 'e.g. johndoe'
-                });
-                if (!entered) { return; }
-                await config.update('credlyUsername', entered, vscode.ConfigurationTarget.Global);
-                username = entered;
-            }
-            provider.refreshBadges(username);
         }),
 
         vscode.workspace.onDidChangeConfiguration(e => {
