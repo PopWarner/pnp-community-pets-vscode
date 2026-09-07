@@ -3,7 +3,7 @@
     "displayName": "PnP Community Pets",
     "description": "Animated M365 and Power Platform mascots for your VS Code editor",
     "version": "0.0.1",
-    "publisher": "pnp",
+    "publisher": "WarnerDigital",
     "license": "MIT",
     "preview": true,
     "icon": "media/icon.png",
