@@ -16,4 +16,5 @@ scripts/**
 temp/**
 templates/**
 media/pets/**/archive/**
+media/icon-concepts/**
 **/*-original-*.png
