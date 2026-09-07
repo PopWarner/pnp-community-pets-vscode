@@ -17,3 +17,5 @@ Every spot that still needs a shot is marked with an HTML comment, invisible whe
 | `tint-source-chroma.png` | A tintable mascot's raw sprite sheet showing the #FF00FF chroma-key source region |
 
 Keep them reasonably small (PNG, ~800px wide is plenty) so the repo doesn't bloat.
+
+`emote-contact-sheet.png` is generated, not hand-captured: run `python scripts/generate-emote-contact-sheet.py` (needs Pillow) any time emotes are added or removed to regenerate it from the current contents of `media/emotes/`.
