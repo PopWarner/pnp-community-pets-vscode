@@ -4,25 +4,27 @@ Ideas, planned features, and community suggestions. Open a GitHub Discussion to 
 
 ---
 
-## Where things stand (2026-07-05)
+## Where things stand (2026-09-07)
 
-Last commit: `ab430a9` "Added Emotes and associated intiial functionality." — committed and pushed, in sync with `origin/main`, nothing uncommitted.
+Current status: initial preview is functional and close to public-ready. The remaining work before a wider Marketplace push is mostly polish, repo cleanup, and a final smoke test in an installed VSIX.
 
-**Shipped and working:** core animated panel, multiple pets, persistence across restarts, Credly badge strip, spawn/remove/name/tint pickers, individual pet removal + live speed adjustment, the badge/sign library, and the new Emote system (see below) including click reactions and pet-to-pet proximity interactions.
+**Shipped and working:** core animated panel, multiple pets, persistence across restarts, spawn/remove/name/tint pickers, individual pet removal + live speed adjustment, bundled emotes, click reactions, pet-to-pet proximity interactions, and VS Code event reactions for saves, terminals, tasks, and debugging.
 
-**In progress after `2c4f21d`:** VS Code Event Reactions architecture has started. Event-triggered emotes now use their own transient "event" lane in the canvas, separate from each pet's user-selected click emote. Precedence for the above-head slot is pet-to-pet interaction -> VS Code event reaction -> user click emote -> persistent sign, so event reactions can appear without overwriting a pet's chosen click reaction.
+**Descoped for initial release:** the badge/sign library and Credly integration are built but disabled (`BADGE_FEATURES_ENABLED = false` in `PetViewProvider.ts`) until they're ready to ship.
 
-**Most natural next step:** VS Code Event Reactions (build success/fail, file saved, etc.) — the Emote system was built specifically so this wouldn't need new sprite art. See that section below for the concrete plan.
+**Known pre-public polish:** final icon selection, README/package hygiene, live VSIX smoke test, and deciding whether public GitHub repo comes before or alongside Marketplace publishing.
+
+**Most natural next step:** install the packaged `.vsix` in a clean VS Code window, run through the main user flows, then flip the repo public if screenshots, README, and license all look good.
 
 ---
 
 ## MVP: v0.1 (Get Something Moving)
 
-- [ ] Basic animated mascot panel: sprite walking/idle loop on canvas
-- [ ] Parker the Porcupine (parker-ms.svg from pnp/media): first mascot, moving across panel
-- [ ] `Spawn a Pet` and `Remove All Pets` commands
-- [ ] Speed and pet-count settings
-- [ ] Default (VS Code editor background) theme
+- [x] Basic animated mascot panel: sprite walking/idle loop on canvas
+- [x] Parker the Porcupine: first mascot, moving across panel
+- [x] `Spawn a Pet` and `Remove All Pets` commands
+- [x] Speed and pet-count settings
+- [x] Default theme
 - [ ] Publish to VS Code Marketplace
 
 ---

@@ -7,7 +7,8 @@ Everything you need to start a new PNG sprite sheet mascot lives in this folder.
 | `sprite-sheet-guide-4x2.png` | Transparent grid template. Draw your mascot directly on top of it and export with the lines still in, no layer cleanup needed |
 | `reference-parker-sprite.png` | A real, working sprite sheet built the same way, guide lines baked in. Study its layout and margins, or attach it to an AI tool as a style/format reference |
 
-<SCREENSHOT HERE - Side-by-side preview of sprite-sheet-guide-4x2.png and reference-parker-sprite.png>
+<!-- SCREENSHOT NEEDED: docs/screenshots/sprite-sheet-template.png - Side-by-side preview of sprite-sheet-guide-4x2.png and reference-parker-sprite.png -->
+![Sprite sheet template](../docs/screenshots/sprite-sheet-template.png)
 
 ## How to use it
 
@@ -20,7 +21,8 @@ Everything you need to start a new PNG sprite sheet mascot lives in this folder.
 4. Export the whole thing as a transparent PNG, guide lines and all. No layer deletion, no flattening tricks.
 5. In your `mascot.json`, set `"framePadding": 3` alongside your `png-sheet` config. This tells the extension how many pixels to crop in from each cell edge.
 
-<SCREENSHOT HERE - Sprite sheet opened in an image editor with the 4x2 grid visible and mascot frames placed inside each cell>
+<!-- SCREENSHOT NEEDED: docs/screenshots/sprite-sheet-in-editor.png - Sprite sheet opened in an image editor with the 4x2 grid visible and mascot frames placed inside each cell -->
+![Sprite sheet in an image editor](../docs/screenshots/sprite-sheet-in-editor.png)
 
 ```json
 {
@@ -47,6 +49,4 @@ AI-generated sprite sheets are frequently misaligned by a few pixels, so plan on
 
 ## Adding a tintable area
 
-If you want part of your mascot to be user-colorable (like Parker's shirt), paint that area with flat, hard-edged pure magenta (`#FF00FF`) instead of its real color. See the "Make it color-tintable" section in [CONTRIBUTING.md](../CONTRIBUTING.md) for the full explanation and design guidance.
-
-<SCREENSHOT HERE - Close-up of a sprite frame showing the #FF00FF tint region before runtime color replacement>
+If you want part of your mascot to be user-colorable (like Parker's shirt), paint that area with flat, hard-edged pure magenta (`#FF00FF`) instead of its real color. See the "Make it color-tintable" section in [CONTRIBUTING.md](../CONTRIBUTING.md) for the full explanation, design guidance, and a look at the #FF00FF chroma-key region on a real mascot.

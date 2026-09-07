@@ -4,15 +4,17 @@ Each mascot lives in its own subfolder. Contributors can use PNG sprite sheets, 
 
 ```text
 media/pets/
-├── parker/
-│   └── parker-ms.svg
+├── parker-chroma/
+│   └── parker-wd-sprite-chroma.png   ← PNG sprite sheet, tintable
+├── bit-chroma/
+│   └── bit-sprite-chroma.png         ← PNG sprite sheet, tintable
 ├── your-mascot/
-│   ├── idle.gif           ← option A: animated GIF per state
+│   ├── idle.gif                      ← option A: animated GIF per state
 │   ├── walk.gif
-│   ├── idle-1.svg         ← option B: SVG frames
+│   ├── idle-1.svg                    ← option B: SVG frames
 │   ├── walk-right-1.svg
-│   └── walk-right-2.svg
-│   ── sprite-sheet.png    ← option C: PNG sprite sheet
+│   ├── walk-right-2.svg
+│   └── sprite-sheet.png              ← option C: PNG sprite sheet
 └── README.md
 ```
 
@@ -20,11 +22,13 @@ media/pets/
 
 ## Current mascots
 
-| Folder | Mascot | Format | Source |
+| Folder | Mascot | Format | Notes |
 |---|---|---|---|
-| `parker/` | Parker the Porcupine | SVG | [pnp/media](https://github.com/pnp/media/tree/master/parker) |
+| `parker-chroma/` | Parker the Porcupine | PNG sprite sheet | Official PnP community mascot, tintable |
+| `bit-chroma/` | Bit | PNG sprite sheet | Power Platform mascot, tintable |
+| `parker/` | Parker (legacy) | SVG, single static frame | Hidden from the spawn picker; kept as the reference example for the SVG format, see [CONTRIBUTING.md](../../CONTRIBUTING.md) |
 
-<SCREENSHOT HERE - Current mascot gallery showing Parker and Bit in the pet panel>
+See the [Screenshots section](../../README.md#screenshots) in the root README for the mascot picker in action.
 
 ---
 
@@ -32,7 +36,7 @@ media/pets/
 
 All frames in one PNG, laid out in a grid:
 
-<SCREENSHOT HERE - PNG sprite sheet grid showing 4 idle frames and 4 walk-right frames>
+![Sprite sheet example](../../docs/screenshots/sprite-sheet-example.png)
 
 ```text
 +----------+----------+----------+----------+
@@ -65,7 +69,7 @@ Flat colors, clean outlines, no background fill.
 
 One static SVG file per animation frame. The canvas cycles through them like a flipbook.
 
-<SCREENSHOT HERE - Example SVG-frame mascot folder and rendered static mascot preview>
+<!-- SCREENSHOT NEEDED: docs/screenshots/svg-frame-example.png - Example SVG-frame mascot folder and rendered static mascot preview -->
 
 - No background fill
 - Any viewBox: the canvas scales to `frameWidth × frameHeight` automatically
@@ -94,7 +98,7 @@ your-mascot/
 
 One animated GIF per animation state. The browser handles frame timing internally, so no frame math is required.
 
-<SCREENSHOT HERE - Example GIF mascot folder and rendered animated mascot preview>
+<!-- SCREENSHOT NEEDED: docs/screenshots/gif-format-example.png - Example GIF mascot folder and rendered animated mascot preview -->
 
 ```text
 your-mascot/

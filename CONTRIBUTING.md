@@ -1,6 +1,6 @@
 # Contributing to PnP Community Pets
 
-Thanks for wanting to contribute! This project is built by and for the M365 and Power Platform community. Whether you're submitting a new mascot sprite, fixing a bug, proposing a theme, or improving docs, all contributions are welcome.
+Thanks for wanting to contribute! This project is built by and for the M365 and Power Platform community. New mascot sprites, bug fixes, themes, and doc improvements are all welcome — see the table below for where to start with each.
 
 ---
 
@@ -40,7 +40,7 @@ npm run watch
 
 > **Original community mascots are always welcome.** Your own character is great, no prior approval needed. If you're submitting something as an *official* mascot tied to a specific brand or program, link the official source so the art and colors can be verified. Not sure if something qualifies, or want feedback before you build? Open a GitHub Discussion, happy to help.
 
-Mascots are **entirely no-code**. Each one lives in its own folder under `media/pets/<your-mascot>/` with a `mascot.json` manifest describing it. The extension discovers and registers every folder automatically on startup, so you never touch a `.ts` file.
+Mascots are entirely no-code. Each one lives in its own folder under `media/pets/<your-mascot>/` with a `mascot.json` manifest describing it. The extension discovers and registers every folder automatically on startup, so you never touch a `.ts` file.
 
 ```text
 media/pets/my-mascot/
@@ -68,9 +68,9 @@ A single PNG grid, 4 columns × 2 rows:
 
 Walking left is generated automatically by mirroring row 1, so you don't need to draw it separately.
 
-**Recommended canvas:** 384×256 px total (96×128 px per frame). This is the size we've tested and confirmed looks crisp at the in-panel display size.
+Recommended canvas: 384×256 px total (96×128 px per frame). This is the size we've tested and confirmed looks crisp at the in-panel display size.
 
-**Start here:** [templates/README.md](templates/README.md) has a grid template, a working reference sprite sheet, and an AI prompt template: everything you need to build your first sprite sheet from scratch. Draw your mascot directly on the template and export with the guide lines still in the image; no layer cleanup required. Just keep your character a few pixels clear of each gridline, and set `"framePadding": 3` in your manifest (see below) so the extension crops those lines back out automatically.
+[templates/README.md](templates/README.md) has a grid template, a working reference sprite sheet, and an AI prompt template: everything you need to build your first sprite sheet from scratch. Draw your mascot directly on the template and export with the guide lines still in the image; no layer cleanup required. Just keep your character a few pixels clear of each gridline, and set `"framePadding": 3` in your manifest (see below) so the extension crops those lines back out automatically.
 
 ![Sprite sheet example](docs/screenshots/sprite-sheet-example.png)
 
@@ -105,13 +105,13 @@ One looping GIF per animation state (`idle`, `walkRight`, optional `walkLeft`). 
 
 ### Step 2: Make it color-tintable (optional)
 
-Users can pick a custom color for any area of your mascot you mark as tintable, for example Parker's shirt. This only works with the **PNG sprite sheet** format.
+Users can pick a custom color for any area of your mascot you mark as tintable, for example Parker's shirt. This only works with the PNG sprite sheet format.
 
-**How it works:** paint the area you want to be colorable with a flat **chroma-key color**, pure magenta, `#FF00FF`. It's the same "green screen" idea used in film, just magenta instead of green since it's far less likely to appear naturally in character art (unlike green, which shows up in nature-themed mascots). At draw time, the extension finds every pixel matching that color and swaps it for whichever color the user picked.
+Paint the area you want to be colorable with a flat chroma-key color, pure magenta, `#FF00FF`. It's the same "green screen" idea used in film, just magenta instead of green since it's far less likely to appear naturally in character art (unlike green, which shows up in nature-themed mascots). At draw time, the extension finds every pixel matching that color and swaps it for whichever color the user picked.
 
-**Design guidance:**
+Design guidance:
 
-- Use **flat, hard-edged fills** for the chroma area. Avoid soft brushes or heavy anti-aliasing at the boundary; blended/feathered edges leave a thin fringe of the original chroma color that won't get replaced cleanly.
+- Use flat, hard-edged fills for the chroma area. Avoid soft brushes or heavy anti-aliasing at the boundary; blended/feathered edges leave a thin fringe of the original chroma color that won't get replaced cleanly.
 - Don't use magenta anywhere else in your art (eyes, accessories, etc.). Anything matching the chroma color gets swapped, intentional or not.
 
 ```json
@@ -125,7 +125,7 @@ Users can pick a custom color for any area of your mascot you mark as tintable, 
 - `chromaColor`: the color you painted (defaults to `#FF00FF` if omitted)
 - `defaultTintColor`: fallback color used when the mascot spawns automatically on startup (no user prompt happens then), so it's never seen with the raw chroma color unless someone deliberately picks "no tint" from the spawn picker
 
-**Real examples:** [media/pets/parker-chroma/](media/pets/parker-chroma/) and [media/pets/bit-chroma/](media/pets/bit-chroma/) are working tintable mascots.
+Real examples: [media/pets/parker-chroma/](media/pets/parker-chroma/) and [media/pets/bit-chroma/](media/pets/bit-chroma/) are working tintable mascots.
 
 ![Tint source chroma](docs/screenshots/tint-source-chroma.png)
 

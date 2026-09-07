@@ -15,6 +15,12 @@ Every spot that still needs a shot is marked with an HTML comment, invisible whe
 | `emote-contact-sheet.png` | Contact sheet of bundled PNG emotes |
 | `sprite-sheet-example.png` | A 4x2 mascot sprite sheet showing idle row and walk-right row |
 | `tint-source-chroma.png` | A tintable mascot's raw sprite sheet showing the #FF00FF chroma-key source region |
+| `svg-frame-example.png` | Example SVG-frame mascot folder and rendered static mascot preview (for `media/pets/README.md`) |
+| `gif-format-example.png` | Example GIF mascot folder and rendered animated mascot preview (for `media/pets/README.md`) |
+| `sprite-sheet-template.png` | Side-by-side preview of `sprite-sheet-guide-4x2.png` and `reference-parker-sprite.png` (for `templates/README.md`) |
+| `sprite-sheet-in-editor.png` | A sprite sheet open in an image editor with the 4x2 grid visible and mascot frames placed inside each cell (for `templates/README.md`) |
+
+The last four are for the contributor-facing docs under `media/pets/` and `templates/` — lower priority than the marketplace-facing set above, since those docs are read by contributors, not prospective users.
 
 Keep them reasonably small (PNG, ~800px wide is plenty) so the repo doesn't bloat.
 
