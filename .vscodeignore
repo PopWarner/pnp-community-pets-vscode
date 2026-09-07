@@ -12,6 +12,7 @@ node_modules/**
 package-lock.json
 docs/**
 BACKLOG.md
+scripts/**
 temp/**
 templates/**
 media/pets/**/archive/**
