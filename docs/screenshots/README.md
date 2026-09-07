@@ -14,6 +14,6 @@ Every spot that still needs a shot is marked with an HTML comment, invisible whe
 | `event-reaction-settings.png` | VS Code Settings UI showing one event's enabled/emote/target/bounce controls |
 | `emote-contact-sheet.png` | Contact sheet of bundled PNG emotes |
 | `sprite-sheet-example.png` | A 4x2 mascot sprite sheet showing idle row and walk-right row |
-| `tint-before-after.png` | A tintable mascot with #FF00FF source region next to runtime-tinted output |
+| `tint-source-chroma.png` | A tintable mascot's raw sprite sheet showing the #FF00FF chroma-key source region |
 
 Keep them reasonably small (PNG, ~800px wide is plenty) so the repo doesn't bloat.

@@ -128,8 +128,9 @@ Users can pick a custom color for any area of your mascot you mark as tintable, 
 
 **Real examples:** [media/pets/parker-chroma/](media/pets/parker-chroma/) and [media/pets/bit-chroma/](media/pets/bit-chroma/) are working tintable mascots.
 
-<!-- SCREENSHOT NEEDED: docs/screenshots/tint-before-after.png - Tintable mascot source art showing pure #FF00FF shirt before tinting and the same mascot after user color tinting -->
-![Tint before and after](docs/screenshots/tint-before-after.png)
+![Tint source chroma](docs/screenshots/tint-source-chroma.png)
+
+The magenta `#FF00FF` shirt above is the raw chroma-key source. At spawn time, the extension replaces every pixel of that color with whichever color the user picks (see the [Screenshots section](README.md#screenshots) in the README for the picker itself).
 
 ---
 
