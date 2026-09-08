@@ -80,7 +80,7 @@ export class PetViewProvider implements vscode.WebviewViewProvider {
         );
     }
 
-    /** Spawns pets from settings — used on panel load and config change. */
+    /** Spawns pets from settings. Used on panel load and config change. */
     public spawnPets() {
         if (!this._view) { return; }
 
@@ -103,7 +103,7 @@ export class PetViewProvider implements vscode.WebviewViewProvider {
         this._postSpawn(mascot, count, { tintColor });
     }
 
-    /** Interactive spawn — QuickPick mascot, optional name, add one at a time. */
+    /** Interactive spawn: QuickPick mascot, optional name, add one at a time. */
     public async spawnInteractive() {
         const all = MascotRegistry.getAll();
 
@@ -122,21 +122,21 @@ export class PetViewProvider implements vscode.WebviewViewProvider {
         let tintColor: string | undefined;
         if (picked.mascot.sprite.type === 'png-sheet' && picked.mascot.sprite.tintable) {
             const result = await _pickTintColor();
-            if (result === undefined) { return; }   // user pressed Escape — cancel spawn
+            if (result === undefined) { return; }   // user pressed Escape, cancel spawn
             tintColor = result ?? undefined;         // null (no tint) → leave tintColor unset
         }
 
         let signBadgeId: string | undefined;
         if (BADGE_FEATURES_ENABLED && BadgeRegistry.getAll().length > 0) {
             const result = await _pickSign();
-            if (result === undefined) { return; }    // user pressed Escape — cancel spawn
+            if (result === undefined) { return; }    // user pressed Escape, cancel spawn
             signBadgeId = result ?? undefined;       // null (no sign) → leave signBadgeId unset
         }
 
         let clickEmoteId: string | undefined;
         if (EmoteRegistry.getAll().length > 0) {
             const result = await _pickClickEmote();
-            if (result === undefined) { return; }     // user pressed Escape — cancel spawn
+            if (result === undefined) { return; }     // user pressed Escape, cancel spawn
             clickEmoteId = result ?? undefined;       // null (none) → leave clickEmoteId unset
         }
 
@@ -268,7 +268,7 @@ export class PetViewProvider implements vscode.WebviewViewProvider {
     private async _handleMessage(msg: { command: string }) {
         switch (msg.command) {
             case 'ready': {
-                // Webview just (re)started — reset in-memory tracking then restore
+                // Webview just (re)started, reset in-memory tracking then restore
                 this._activePets = [];
                 const config = vscode.workspace.getConfiguration('pnpPets');
 
@@ -277,7 +277,7 @@ export class PetViewProvider implements vscode.WebviewViewProvider {
                     if (saved.length > 0) {
                         for (const pet of saved) {
                             const mascot = MascotRegistry.get(pet.mascotId);
-                            if (!mascot) { continue; } // mascot was removed — skip it
+                            if (!mascot) { continue; } // mascot was removed, skip it
                             this._view?.webview.postMessage({
                                 command: 'spawnPets',
                                 mascot: this._resolveUris(mascot, pet.tintColor),
@@ -357,7 +357,7 @@ export class PetViewProvider implements vscode.WebviewViewProvider {
         if (!BADGE_FEATURES_ENABLED) { return undefined; }
         if (!signBadgeId) { return undefined; }
         const badge = BadgeRegistry.get(signBadgeId);
-        if (!badge) { return undefined; } // badge was removed — skip it
+        if (!badge) { return undefined; } // badge was removed, skip it
 
         return {
             templateUri: this._mediaUri('signs/speech-bubble.svg'),
@@ -371,7 +371,7 @@ export class PetViewProvider implements vscode.WebviewViewProvider {
     private _resolveEmoteUri(emoteId?: string): string | undefined {
         if (!emoteId) { return undefined; }
         const emote = EmoteRegistry.get(emoteId);
-        if (!emote) { return undefined; } // emote was removed — skip it
+        if (!emote) { return undefined; } // emote was removed, skip it
         return this._mediaUri(`emotes/${emote.imageFile}`);
     }
 
@@ -409,7 +409,7 @@ export class PetViewProvider implements vscode.WebviewViewProvider {
                 vscode.Uri.joinPath(this._context.extensionUri, 'media', file)
             ).toString();
 
-        // Hardcoded to the "heart" sample emote for now — pet-to-pet interactions
+        // Hardcoded to the "heart" sample emote for now: pet-to-pet interactions
         // aren't user-configurable yet, so there's no setting to read this from.
         const interactionEmoteUri = this._resolveEmoteUri('heart') ?? '';
 
@@ -521,8 +521,8 @@ async function _pickTintColor(): Promise<string | null | undefined> {
         placeHolder: 'Pick a color for the tintable areas'
     });
 
-    if (!picked) { return undefined; }        // Escape — cancel the whole spawn
-    if (picked.color === 'NONE') { return null; } // No tint — spawn unmodified
+    if (!picked) { return undefined; }        // Escape, cancel the whole spawn
+    if (picked.color === 'NONE') { return null; } // No tint, spawn unmodified
 
     if (!picked.color) {
         return vscode.window.showInputBox({
@@ -548,7 +548,7 @@ async function _pickSign(): Promise<string | null | undefined> {
         { placeHolder: 'Have this pet hold up a badge or event logo?' }
     );
 
-    if (!picked) { return undefined; } // Escape — cancel the whole spawn
+    if (!picked) { return undefined; } // Escape, cancel the whole spawn
     return picked.id;
 }
 
@@ -564,6 +564,6 @@ async function _pickClickEmote(): Promise<string | null | undefined> {
         { placeHolder: 'Pick a reaction to show when this pet is clicked' }
     );
 
-    if (!picked) { return undefined; } // Escape — cancel the whole spawn
+    if (!picked) { return undefined; } // Escape, cancel the whole spawn
     return picked.id;
 }

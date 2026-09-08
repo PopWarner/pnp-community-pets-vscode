@@ -1,6 +1,6 @@
 # Contributing to PnP Community Pets
 
-Thanks for wanting to contribute! This project is built by and for the M365 and Power Platform community. New mascot sprites, bug fixes, themes, and doc improvements are all welcome — see the table below for where to start with each.
+Thanks for wanting to contribute! This project is built by and for the M365 and Power Platform community. New mascot sprites, bug fixes, themes, and doc improvements are all welcome. See the table below for where to start with each.
 
 ---
 

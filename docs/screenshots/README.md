@@ -2,7 +2,7 @@
 
 Drop PNGs here with these exact filenames. `README.md` and `CONTRIBUTING.md` already link to them.
 
-Every spot that still needs a shot is marked with an HTML comment, invisible when rendered. Search the repo for `SCREENSHOT NEEDED` to find every remaining placeholder; once you drop in the real PNG, the `![...]` line right below the comment will render it automatically. Delete the comment once the shot is in, or leave it — it's inert either way.
+Every spot that still needs a shot is marked with an HTML comment, invisible when rendered. Search the repo for `SCREENSHOT NEEDED` to find every remaining placeholder; once you drop in the real PNG, the `![...]` line right below the comment will render it automatically. Delete the comment once the shot is in, or leave it. It's inert either way.
 
 | Filename | What to capture |
 |---|---|
@@ -20,7 +20,7 @@ Every spot that still needs a shot is marked with an HTML comment, invisible whe
 | `sprite-sheet-template.png` | Side-by-side preview of `sprite-sheet-guide-4x2.png` and `reference-parker-sprite.png` (for `templates/README.md`) |
 | `sprite-sheet-in-editor.png` | A sprite sheet open in an image editor with the 4x2 grid visible and mascot frames placed inside each cell (for `templates/README.md`) |
 
-The last four are for the contributor-facing docs under `media/pets/` and `templates/` — lower priority than the marketplace-facing set above, since those docs are read by contributors, not prospective users.
+The last four are for the contributor-facing docs under `media/pets/` and `templates/`, lower priority than the marketplace-facing set above, since those docs are read by contributors, not prospective users.
 
 Keep them reasonably small (PNG, ~800px wide is plenty) so the repo doesn't bloat.
 

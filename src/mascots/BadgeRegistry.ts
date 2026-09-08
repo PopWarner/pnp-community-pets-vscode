@@ -35,7 +35,7 @@ async function _loadManifest(badgesDir: vscode.Uri, folderName: string): Promise
         const bytes = await vscode.workspace.fs.readFile(manifestUri);
         json = JSON.parse(Buffer.from(bytes).toString('utf-8'));
     } catch {
-        return; // folder has no badge.json or it's invalid — skip silently
+        return; // folder has no badge.json or it's invalid, skip silently
     }
 
     try {
@@ -43,7 +43,7 @@ async function _loadManifest(badgesDir: vscode.Uri, folderName: string): Promise
         _registry.set(badge.id, badge);
     } catch (err) {
         vscode.window.showWarningMessage(
-            `PnP Pets: skipping "${folderName}/badge.json" — ${String(err)}`
+            `PnP Pets: skipping "${folderName}/badge.json": ${String(err)}`
         );
     }
 }

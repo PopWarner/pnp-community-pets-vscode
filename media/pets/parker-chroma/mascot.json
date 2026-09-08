@@ -2,7 +2,7 @@
   "$schema": "../../mascot.schema.json",
   "id": "parker",
   "name": "Parker",
-  "description": "Parker the Porcupine — the official PnP community mascot. Pick your own shirt color!",
+  "description": "Parker the Porcupine, the official PnP community mascot. Pick your own shirt color!",
   "type": "png-sheet",
   "src": "parker-wd-sprite-chroma.png",
   "framesPerRow": 4,

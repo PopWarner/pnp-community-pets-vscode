@@ -2,7 +2,7 @@
   "$schema": "../../mascot.schema.json",
   "id": "parker-svg",
   "name": "Parker (SVG, legacy)",
-  "description": "Static SVG example of Parker — kept as a reference for the svg-frames format. Not animated.",
+  "description": "Static SVG example of Parker, kept as a reference for the svg-frames format. Not animated.",
   "type": "svg-frames",
   "frameWidth": 64,
   "frameHeight": 64,

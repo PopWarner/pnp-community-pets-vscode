@@ -33,7 +33,7 @@ export interface SvgFramesConfig {
     frameWidth: number;
     frameHeight: number;
     /** Arrays of SVG filenames (relative to media/pets/) per animation state.
-     *  Walk-left files can be omitted — set to [] and the renderer mirrors walkRight. */
+     *  Walk-left files can be omitted: set to [] and the renderer mirrors walkRight. */
     frames: {
         idle: string[];
         walkRight: string[];
@@ -43,11 +43,11 @@ export interface SvgFramesConfig {
 
 export interface GifConfig {
     type: 'gif';
-    /** Display size on canvas — GIFs scale to fit */
+    /** Display size on canvas; GIFs scale to fit */
     frameWidth: number;
     frameHeight: number;
     /** One GIF file per animation state, relative to media/pets/.
-     *  Each GIF loops internally — no frame math needed.
+     *  Each GIF loops internally, so no frame math is needed.
      *  Omit walkLeft to auto-mirror walkRight. */
     frames: {
         idle: string;

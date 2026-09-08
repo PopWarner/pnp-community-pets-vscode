@@ -44,7 +44,7 @@ async function _loadManifest(petsDir: vscode.Uri, folderName: string): Promise<v
         const bytes = await vscode.workspace.fs.readFile(manifestUri);
         json = JSON.parse(Buffer.from(bytes).toString('utf-8'));
     } catch {
-        return; // folder has no mascot.json or it's invalid — skip silently
+        return; // folder has no mascot.json or it's invalid, skip silently
     }
 
     try {
@@ -52,7 +52,7 @@ async function _loadManifest(petsDir: vscode.Uri, folderName: string): Promise<v
         _registry.set(mascot.id, mascot);
     } catch (err) {
         vscode.window.showWarningMessage(
-            `PnP Pets: skipping "${folderName}/mascot.json" — ${String(err)}`
+            `PnP Pets: skipping "${folderName}/mascot.json": ${String(err)}`
         );
     }
 }

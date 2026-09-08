@@ -86,7 +86,7 @@ Current status: initial preview is functional and close to public-ready. The rem
 
 ---
 
-## Signs & Badges: v0.3 (shipped, refinement pending)
+## Signs & Badges: v0.3 (built, disabled for initial release)
 
 - [x] Badge/logo library (`media/badges/<id>/badge.json`, auto-discovered, no-code contribution like mascots)
 - [x] Generic speech-bubble sign template, shared across all badges
@@ -94,24 +94,24 @@ Current status: initial preview is functional and close to public-ready. The rem
 - [x] Sign rotates with the mascot on walls/ceiling (matches a physically held object)
 - [x] Clicking a sign opens the badge's `linkUrl` (if set) in the browser
 - [ ] **Tighten the gap between the sign and the mascot's actual head.** Current offset is a fixed 12px from the frame's bounding-box edge, not from where the character's visible art actually ends, so mascots with transparent headroom in their sprite will show a bigger gap than intended, most noticeable on walls/ceiling where there's no name label nearby to anchor against. Needs either a per-mascot offset or actual content-bounds detection within the frame.
-- [ ] Live sign editing on an already-spawned pet — stable per-pet IDs now exist (see Individual Pet Management below), so this is mostly a QuickPick + `updatePet` message away
-- [ ] Support multiple sign template shapes (square sign, heart-shaped bubble, etc.) — picked "whatever renders cleanly as SVG" for v1
+- [ ] Live sign editing on an already-spawned pet: stable per-pet IDs now exist (see Individual Pet Management below), so this is mostly a QuickPick + `updatePet` message away
+- [ ] Support multiple sign template shapes (square sign, heart-shaped bubble, etc.); picked "whatever renders cleanly as SVG" for v1
 
 ---
 
 ## Emotes: v0.3 (shipped)
 
-A brief reaction icon shown above a pet's head — deliberately built independent of the sign/badge system (own type, own registry, own renderer, own file) even though it looks structurally similar, so the two can diverge freely.
+A brief reaction icon shown above a pet's head, deliberately built independent of the sign/badge system (own type, own registry, own renderer, own file) even though it looks structurally similar, so the two can diverge freely.
 
 - [x] Emote library (`media/emotes/<id>/emote.json`, auto-discovered, no-code contribution like badges/mascots), `emote.schema.json` at repo root
-- [x] 5 sample icons to test with (`exclamation`, `checkmark`, `x-mark`, `heart`, `star`) — simple SVGs, not final production art
+- [x] 5 sample icons to test with (`exclamation`, `checkmark`, `x-mark`, `heart`, `star`), simple SVGs, not final production art
 - [x] Per-pet click reaction: picked at spawn time (after badge/sign), stored as `clickEmoteId` separately from `clickEmoteEnabled` so toggling it off later won't lose which one was chosen
 - [x] Clicking a pet's body shows its emote for ~1.8s and triggers the bounce; clicking its sign still opens the badge link and does not show the click emote
 - [x] Precedence when both a sign and an emote could occupy the above-head slot: interaction emote → click emote → sign, each resumes automatically once whichever's ahead of it expires, no explicit restore logic
-- [x] **Pet-to-pet proximity interactions** (this replaces the old "Pet Interactions" plan below — no new mascot art needed): two pets both on the floor that come within ~40px roll a 50/50 chance to pause, bounce, and show a shared heart emote together, then resume walking in a new random direction. Uses one shared `EmoteRenderer` instance (hardcoded to the "heart" sample emote), independent of either pet's personal click emote.
-- [ ] `clickEmoteEnabled` toggle isn't exposed in any UI yet — the data model supports "keep the choice, turn it off" but there's no command for it
+- [x] **Pet-to-pet proximity interactions** (this replaces the old "Pet Interactions" plan below; no new mascot art needed): two pets both on the floor that come within ~40px roll a 50/50 chance to pause, bounce, and show a shared heart emote together, then resume walking in a new random direction. Uses one shared `EmoteRenderer` instance (hardcoded to the "heart" sample emote), independent of either pet's personal click emote.
+- [ ] `clickEmoteEnabled` toggle isn't exposed in any UI yet. The data model supports "keep the choice, turn it off" but there's no command for it
 - [ ] Live emote editing on an already-spawned pet (same stable-ID + `updatePet` pattern as speed adjustment)
-- [ ] Interaction emote is hardcoded to "heart" — no setting to change it, and pairing/multi-pet-cluster tracking is a simplification (see comment in `_checkPetInteractions`)
+- [ ] Interaction emote is hardcoded to "heart"; no setting to change it, and pairing/multi-pet-cluster tracking is a simplification (see comment in `_checkPetInteractions`)
 - [ ] Replace the 5 sample icons with real production art when ready
 
 ---

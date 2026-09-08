@@ -184,7 +184,7 @@
     // -------------------------------------------------------------------------
     // GIF renderer
     // Loads one animated GIF per state. The browser advances GIF frames on its
-    // own timer — drawImage() captures whichever frame is current at each tick.
+    // own timer; drawImage() captures whichever frame is current at each tick.
     // No frame math needed; the GIF just plays itself.
     // -------------------------------------------------------------------------
 
@@ -279,7 +279,7 @@
     }
 
     // -------------------------------------------------------------------------
-    // Sign — a badge/logo held above the mascot. Drawn in the mascot's local
+    // Sign: a badge/logo held above the mascot. Drawn in the mascot's local
     // (pre-rotation) coordinate space, so it rotates along with the mascot on
     // walls and ceiling, same as a physically held object would.
     // -------------------------------------------------------------------------
@@ -308,7 +308,7 @@
             this._badge.src = sign.badgeImageUri;
         }
 
-        // Called from inside the mascot's rotated transform — (0, 0) is the
+        // Called from inside the mascot's rotated transform: (0, 0) is the
         // mascot's own center, so this positions the sign relative to that.
         draw(frameHeight) {
             if (!this.ready) { return; }
@@ -338,7 +338,7 @@
     }
 
     // -------------------------------------------------------------------------
-    // Emote — a brief reaction icon shown above the head, e.g. on click.
+    // Emote: a brief reaction icon shown above the head, e.g. on click.
     // Deliberately independent of SignRenderer: emotes are transient and
     // single-image, signs are persistent and template+badge composited.
     // -------------------------------------------------------------------------
@@ -355,7 +355,7 @@
             this._img.src = imageUri;
         }
 
-        // Called from inside the mascot's rotated transform — (0, 0) is the
+        // Called from inside the mascot's rotated transform: (0, 0) is the
         // mascot's own center, so this positions the emote relative to that.
         draw(frameHeight) {
             if (!this.ready) { return; }
@@ -380,7 +380,7 @@
             this.clickEmoteEnabled = clickEmoteEnabled !== false;
             this.emoteUntil = 0;
 
-            // Pet-to-pet interaction emote — deliberately separate from the
+            // Pet-to-pet interaction emote, deliberately separate from the
             // personal click emote above, so the two never overwrite each other.
             this._interactionEmoteRenderer = null;
             this.interactionEmoteUntil = 0;
@@ -445,7 +445,7 @@
         }
 
         // Converts a canvas point into this mascot's local, pre-rotation
-        // coordinate space — the same space its sprite and sign are drawn in.
+        // coordinate space, the same space its sprite and sign are drawn in.
         _toLocalPoint(px, py) {
             const fw = this.renderer.frameWidth;
             const fh = this.renderer.frameHeight;
@@ -626,7 +626,7 @@
 
             // Precedence for the above-head slot: pet interaction > VS Code
             // event > click emote > sign. Each one resumes automatically once
-            // whichever is ahead of it expires — no explicit restore needed.
+            // whichever is ahead of it expires, no explicit restore needed.
             const fw = this.renderer.frameWidth;
             const fh = this.renderer.frameHeight;
 
@@ -688,7 +688,7 @@
     requestAnimationFrame(tick);
 
     // -------------------------------------------------------------------------
-    // Pet-to-pet proximity interactions — reuses the Emote system, no new
+    // Pet-to-pet proximity interactions, reuses the Emote system, no new
     // sprite frames needed. Good enough for a handful of pets; with several
     // clustered together the "already greeted" tracking can be imprecise,
     // acceptable for an occasional flourish rather than core logic.
@@ -770,7 +770,7 @@
     }
 
     // -------------------------------------------------------------------------
-    // Click handling — hit-test topmost-first, react to a body click, open the
+    // Click handling: hit-test topmost-first, react to a body click, open the
     // badge's link (if any) on a sign click.
     // -------------------------------------------------------------------------
 
@@ -810,7 +810,7 @@
         for (const badge of badges) {
             const link = document.createElement('a');
             link.href = badge.badgeUrl || profileUrl;
-            link.title = `${badge.name} — ${badge.issuerName}`;
+            link.title = `${badge.name} (${badge.issuerName})`;
             link.setAttribute('aria-label', badge.name);
 
             const img = document.createElement('img');

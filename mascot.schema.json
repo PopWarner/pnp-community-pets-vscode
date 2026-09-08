@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "PnP Community Pets — Mascot Manifest",
+  "title": "PnP Community Pets: Mascot Manifest",
   "description": "Drop this file in your mascot folder under media/pets/<your-mascot>/mascot.json",
   "type": "object",
   "required": ["name", "type"],
