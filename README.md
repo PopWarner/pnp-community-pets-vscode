@@ -71,6 +71,12 @@ Adding a new mascot or emote is a no-code contribution: drop a folder with a JSO
 
 Badge signs and Credly profile integrations are planned for a future release.
 
+## About This Pet Project
+
+Yes, that's the joke. This is a genuine pet project, a fun side build, and it's not finished. The core walking-around-your-sidebar part works well, but there's more to do: more mascots, more emotes, the badge/Credly stuff that's built but not turned on yet, and probably a rough edge or two in the code that a fresh pair of eyes would spot in about five seconds.
+
+If any of that sounds fun to poke at, contributions are genuinely welcome, no prior experience with the codebase required. See [CONTRIBUTING.md](CONTRIBUTING.md) to get started, or [BACKLOG.md](BACKLOG.md) below for a running list of what's planned.
+
 ## Roadmap
 
 See [BACKLOG.md](BACKLOG.md) for planned features and ways to get involved.
