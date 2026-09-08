@@ -56,6 +56,7 @@ export class PetViewProvider implements vscode.WebviewViewProvider {
     private _view?: vscode.WebviewView;
     private _activePets: SavedPet[] = [];
     private readonly _savedPetsKey = 'pnpPets.savedPets';
+    private readonly _hasSpawnedDefaultsKey = 'pnpPets.hasSpawnedDefaults';
 
     constructor(private readonly _context: vscode.ExtensionContext) {}
 
@@ -101,6 +102,38 @@ export class PetViewProvider implements vscode.WebviewViewProvider {
             : undefined;
 
         this._postSpawn(mascot, count, { tintColor, name: `PnP ${mascot.name}` });
+    }
+
+    /** Called whenever there are no pets to restore. Shows the welcome duo on
+     *  the very first activation ever, otherwise defers to the regular
+     *  settings-driven `spawnPets()`. */
+    private _spawnDefaultOrWelcome() {
+        const hasSpawnedDefaults = this._context.globalState.get<boolean>(this._hasSpawnedDefaultsKey, false);
+        if (hasSpawnedDefaults) {
+            this.spawnPets();
+            return;
+        }
+
+        this._spawnWelcomeDuo();
+        this._context.globalState.update(this._hasSpawnedDefaultsKey, true);
+    }
+
+    /** First-ever activation only: spawns a fixed Parker (purple) + Bit (orange)
+     *  welcome duo instead of the single settings-driven mascot, so a fresh
+     *  install shows off both bundled mascots right away. Runs once; after
+     *  that, an empty pet list falls back to the regular `spawnPets()`. */
+    private _spawnWelcomeDuo() {
+        if (!this._view) { return; }
+
+        const parker = MascotRegistry.get('parker');
+        const bit = MascotRegistry.get('bit');
+
+        if (parker) {
+            this._postSpawn(parker, 1, { tintColor: '#7B48CC', name: 'PnP Parker' });
+        }
+        if (bit) {
+            this._postSpawn(bit, 1, { tintColor: '#FF6600', name: 'PnP Bit' });
+        }
     }
 
     /** Interactive spawn: QuickPick mascot, optional name, add one at a time. */
@@ -294,10 +327,10 @@ export class PetViewProvider implements vscode.WebviewViewProvider {
                         // Re-save in case any missing mascots were pruned
                         this._persistActivePets();
                     } else {
-                        this.spawnPets();
+                        this._spawnDefaultOrWelcome();
                     }
                 } else {
-                    this.spawnPets();
+                    this._spawnDefaultOrWelcome();
                 }
 
                 break;

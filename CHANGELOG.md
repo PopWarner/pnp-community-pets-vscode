@@ -27,6 +27,7 @@ All notable changes to the "PnP Community Pets" extension will be documented in 
 - `PnP Pets: Remove a Pet` command: remove one specific pet without affecting the others
 - `PnP Pets: Adjust Pet Speed` command: speed up or slow down one specific pet live, no respawn needed
 - Marketplace packaging: extension icon, `preview` flag, corrected repository links
+- First-ever activation spawns a named welcome duo, PnP Parker (purple) and PnP Bit (orange), instead of a single unnamed default pet
 
 ### Fixed
 
