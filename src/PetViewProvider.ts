@@ -100,7 +100,7 @@ export class PetViewProvider implements vscode.WebviewViewProvider {
             ? mascot.sprite.defaultTintColor ?? '#7B48CC'
             : undefined;
 
-        this._postSpawn(mascot, count, { tintColor });
+        this._postSpawn(mascot, count, { tintColor, name: `PnP ${mascot.name}` });
     }
 
     /** Interactive spawn: QuickPick mascot, optional name, add one at a time. */
