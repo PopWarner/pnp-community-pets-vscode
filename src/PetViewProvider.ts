@@ -101,7 +101,7 @@ export class PetViewProvider implements vscode.WebviewViewProvider {
             ? mascot.sprite.defaultTintColor ?? '#7B48CC'
             : undefined;
 
-        this._postSpawn(mascot, count, { tintColor, name: `PnP ${mascot.name}` });
+        this._postSpawn(mascot, count, { tintColor, name: _defaultNameFor(mascot) });
     }
 
     /** Called whenever there are no pets to restore. Shows the welcome duo on
@@ -132,7 +132,7 @@ export class PetViewProvider implements vscode.WebviewViewProvider {
             this._postSpawn(parker, 1, { tintColor: '#7B48CC', name: 'PnP Parker' });
         }
         if (bit) {
-            this._postSpawn(bit, 1, { tintColor: '#FF6600', name: 'PnP Bit' });
+            this._postSpawn(bit, 1, { tintColor: '#FF6600', name: 'Bit' });
         }
     }
 
@@ -525,6 +525,12 @@ function randomPetName(mascotName: string): string {
     const prefix = PET_NAME_PREFIXES[Math.floor(Math.random() * PET_NAME_PREFIXES.length)];
     const adj    = PET_NAME_ADJECTIVES[Math.floor(Math.random() * PET_NAME_ADJECTIVES.length)];
     return `${prefix} ${adj} ${mascotName}`;
+}
+
+/** Only Parker carries the "PnP" prefix by default; other mascots (e.g. Bit)
+ *  just use their own name. */
+function _defaultNameFor(mascot: MascotDefinition): string {
+    return mascot.id === 'parker' ? `PnP ${mascot.name}` : mascot.name;
 }
 
 const SPEED_PRESETS = [
