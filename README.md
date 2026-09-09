@@ -20,9 +20,21 @@ Parker the Porcupine, Bit, and more Copilot, Microsoft 365 & Power Platform masc
 
 ## Screenshots
 
-| Spawn a pet | Pick a color | Click emote | Event reaction |
-|---|---|---|---|
-| ![Spawn picker](docs/screenshots/spawn-picker.png) | ![Color picker](docs/screenshots/color-picker.png) | ![Click emote](docs/screenshots/click-emote.png) | ![Event reaction](docs/screenshots/event-reaction.png) |
+### Spawn a pet
+
+![Spawn picker](docs/screenshots/spawn-picker.png)
+
+### Pick a color
+
+![Color picker](docs/screenshots/color-picker.png)
+
+### Click emote
+
+![Click emote](docs/screenshots/click-emote.png)
+
+### Event reaction
+
+![Event reaction](docs/screenshots/event-reaction.png)
 
 ## Getting Started
 

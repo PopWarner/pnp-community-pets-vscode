@@ -2,7 +2,24 @@
 
 All notable changes to the "PnP Community Pets" extension will be documented in this file.
 
-## [0.0.1] - Unreleased
+## [0.0.2]
+
+### Added
+
+- First-ever activation spawns a named welcome duo, PnP Parker (purple) and Bit (orange), instead of a single unnamed default pet
+- Auto-spawned pets now get a default name instead of showing up unnamed
+
+### Changed
+
+- New extension icon
+- Published under the WarnerDigital publisher
+- Refreshed marketplace description and README copy
+
+### Fixed
+
+- README screenshots reworked from a cramped table into individually stacked images, so they render correctly at their actual aspect ratios on the Marketplace listing instead of squished into equal-width columns
+
+## [0.0.1]
 
 ### Added
 
@@ -27,7 +44,6 @@ All notable changes to the "PnP Community Pets" extension will be documented in 
 - `PnP Pets: Remove a Pet` command: remove one specific pet without affecting the others
 - `PnP Pets: Adjust Pet Speed` command: speed up or slow down one specific pet live, no respawn needed
 - Marketplace packaging: extension icon, `preview` flag, corrected repository links
-- First-ever activation spawns a named welcome duo, PnP Parker (purple) and Bit (orange), instead of a single unnamed default pet
 
 ### Fixed
 

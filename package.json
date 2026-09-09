@@ -2,7 +2,7 @@
     "name": "pnp-community-pets",
     "displayName": "PnP Community Pets",
     "description": "Parker, Bit, and more Copilot, Microsoft 365 & Power Platform mascots that walk your VS Code sidebar and react when you save, build, or debug",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "publisher": "WarnerDigital",
     "license": "MIT",
     "preview": true,
